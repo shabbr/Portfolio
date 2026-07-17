@@ -12,6 +12,7 @@ import {
   LayoutDashboard,
   Link2,
   Loader2,
+  KeyRound,
   LogOut,
   Mail,
   Plus,
@@ -33,6 +34,7 @@ import type {
 } from "@/lib/portfolio-types";
 import { createId, reindexOrder, sortByOrder } from "@/lib/portfolio-types";
 import EmailSettingsPanel from "./EmailSettingsPanel";
+import PasswordSettingsPanel from "./PasswordSettingsPanel";
 
 type TabId =
   | "overview"
@@ -42,7 +44,8 @@ type TabId =
   | "projects"
   | "skills"
   | "nav"
-  | "email";
+  | "email"
+  | "security";
 
 const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: "overview", label: "Overview", icon: <LayoutDashboard size={16} /> },
@@ -53,6 +56,7 @@ const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: "skills", label: "Skills", icon: <Wrench size={16} /> },
   { id: "nav", label: "Navigation", icon: <Link2 size={16} /> },
   { id: "email", label: "Email", icon: <Mail size={16} /> },
+  { id: "security", label: "Password", icon: <KeyRound size={16} /> },
 ];
 const fieldClass =
   "w-full rounded-xl px-3 py-2.5 text-sm bg-[rgba(31,18,12,0.85)] border border-[rgba(230,189,130,0.18)] text-[#fff2df] outline-none focus:border-[rgba(230,189,130,0.55)]";
@@ -397,6 +401,7 @@ export default function AdminApp() {
           {tab === "skills" && <SkillsTab data={data} setData={setData} />}
           {tab === "nav" && <NavTab data={data} setData={setData} />}
           {tab === "email" && <EmailSettingsPanel />}
+          {tab === "security" && <PasswordSettingsPanel />}
         </main>
       </div>
     </div>
@@ -462,7 +467,7 @@ function SiteTab({
     { key: "tagline", label: "Tagline" },
     { key: "location", label: "Location" },
     { key: "email", label: "Email" },
-    { key: "phone", label: "Phone" },
+    { key: "phone", label: "Phone / WhatsApp (e.g. +92 327 7798112)" },
     { key: "linkedin", label: "LinkedIn URL" },
     { key: "linkedinHandle", label: "LinkedIn handle" },
     { key: "github", label: "GitHub URL" },

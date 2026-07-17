@@ -5,7 +5,9 @@ import { useRef } from "react";
 import { ChevronDown, Code2, Database, Mail, MapPin, Server, Sparkles } from "lucide-react";
 import LinkedinIcon from "./icons/LinkedinIcon";
 import GithubIcon from "./icons/GithubIcon";
+import { WhatsAppGlyph } from "./WhatsAppFloat";
 import HeroCrystal from "./HeroCrystal";
+import { whatsAppChatUrl } from "@/lib/phone";
 import { usePortfolio } from "./PortfolioProvider";
 
 const stagger: Variants = {
@@ -210,6 +212,7 @@ export default function Hero() {
               { href:site.github,              icon:<GithubIcon width={18} height={18} />,   label:"GitHub",   color:"rgba(230,189,130,0.9)" },
               { href:site.linkedin,            icon:<LinkedinIcon width={18} height={18} />, label:"LinkedIn", color:"rgba(212,154,87,0.9)" },
               { href:`mailto:${site.email}`,   icon:<Mail size={18} />,                      label:"Email",    color:"rgba(196,125,69,0.9)" },
+              { href:whatsAppChatUrl(site.phone), icon:<WhatsAppGlyph size={18} />,          label:"WhatsApp", color:"rgba(37,211,102,0.95)" },
             ].map(({ href, icon, label, color }, i) => (
               <motion.a key={label} href={href}
                 target={href.startsWith("mailto")?undefined:"_blank"}

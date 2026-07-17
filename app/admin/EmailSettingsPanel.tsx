@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { KeyRound, Loader2, Mail, Send } from "lucide-react";
+import { Loader2, Mail, Send } from "lucide-react";
 
 const fieldClass =
   "w-full rounded-xl px-3 py-2.5 text-sm bg-[rgba(31,18,12,0.85)] border border-[rgba(230,189,130,0.18)] text-[#fff2df] outline-none focus:border-[rgba(230,189,130,0.55)]";
@@ -22,16 +22,10 @@ type EmailState = {
   source: string;
 };
 
-type AuthState = {
-  recoveryEmail: string;
-  hasCustomPassword: boolean;
-};
-
 export default function EmailSettingsPanel() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [testing, setTesting] = useState(false);
-  const [changingPw, setChangingPw] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
@@ -40,11 +34,6 @@ export default function EmailSettingsPanel() {
   const [toEmail, setToEmail] = useState("");
   const [recoveryEmail, setRecoveryEmail] = useState("");
   const [emailMeta, setEmailMeta] = useState<EmailState | null>(null);
-  const [authMeta, setAuthMeta] = useState<AuthState | null>(null);
-
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -54,7 +43,6 @@ export default function EmailSettingsPanel() {
       if (!res.ok) throw new Error("Failed to load email settings");
       const json = await res.json();
       setEmailMeta(json.email);
-      setAuthMeta(json.auth);
       setFromEmail(json.email.fromEmail ?? "");
       setToEmail(json.email.toEmail ?? "");
       setRecoveryEmail(json.auth.recoveryEmail ?? "");
@@ -89,7 +77,6 @@ export default function EmailSettingsPanel() {
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Save failed");
       setEmailMeta(json.email);
-      setAuthMeta(json.auth);
       setApiKeyInput("");
       setMessage("Email settings saved. Contact form will use these credentials.");
       setTimeout(() => setMessage(""), 4000);
@@ -118,37 +105,6 @@ export default function EmailSettingsPanel() {
       setError(err instanceof Error ? err.message : "Test failed");
     } finally {
       setTesting(false);
-    }
-  };
-
-  const changePassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setChangingPw(true);
-    setMessage("");
-    setError("");
-    if (newPassword !== confirmPassword) {
-      setError("New passwords do not match.");
-      setChangingPw(false);
-      return;
-    }
-    try {
-      const res = await fetch("/api/admin/reset-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ currentPassword, password: newPassword }),
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "Password change failed");
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
-      setAuthMeta((prev) => (prev ? { ...prev, hasCustomPassword: true } : prev));
-      setMessage("Admin password updated.");
-      setTimeout(() => setMessage(""), 4000);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Password change failed");
-    } finally {
-      setChangingPw(false);
     }
   };
 
@@ -212,9 +168,6 @@ export default function EmailSettingsPanel() {
                   : "re_xxxxxxxx"
               }
             />
-            <p className="text-[11px] mt-1.5 text-[rgba(215,185,144,0.55)]">
-              Get a key at resend.com. Leave blank to keep the current key.
-            </p>
           </div>
           <div>
             <label className={labelClass}>From email</label>
@@ -270,63 +223,10 @@ export default function EmailSettingsPanel() {
             Send test email
           </button>
         </div>
-      </form>
 
-      <form onSubmit={changePassword} className={`${cardClass} space-y-4`}>
-        <div className="flex items-center gap-2">
-          <KeyRound size={18} className="text-[#e6bd82]" />
-          <div>
-            <h2 className="text-lg font-bold">Change admin password</h2>
-            <p className="text-sm text-[rgba(239,222,201,0.65)] mt-0.5">
-              {authMeta?.hasCustomPassword
-                ? "Using a custom password stored securely on the server."
-                : "Currently using ADMIN_PASSWORD from environment. Saving a new password overrides it."}
-            </p>
-          </div>
-        </div>
-        <div className="grid sm:grid-cols-3 gap-4">
-          <div>
-            <label className={labelClass}>Current password</label>
-            <input
-              className={fieldClass}
-              type="password"
-              required
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-            />
-          </div>
-          <div>
-            <label className={labelClass}>New password</label>
-            <input
-              className={fieldClass}
-              type="password"
-              required
-              minLength={8}
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-            />
-          </div>
-          <div>
-            <label className={labelClass}>Confirm new password</label>
-            <input
-              className={fieldClass}
-              type="password"
-              required
-              minLength={8}
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
-          </div>
-        </div>
-        <button
-          type="submit"
-          disabled={changingPw}
-          className={btnPrimary}
-          style={{ background: "linear-gradient(135deg,#e6bd82,#c47d45)" }}
-        >
-          {changingPw ? <Loader2 size={15} className="animate-spin" /> : <KeyRound size={15} />}
-          {changingPw ? "Updating..." : "Update password"}
-        </button>
+        <p className="text-[11px] text-[rgba(215,185,144,0.55)]">
+          To change your admin login password, open the <strong>Password</strong> tab.
+        </p>
       </form>
     </div>
   );

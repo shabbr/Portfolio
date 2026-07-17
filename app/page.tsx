@@ -8,6 +8,7 @@ import Projects from "./components/Projects";
 import Skills from "./components/Skills";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
+import WhatsAppFloat from "./components/WhatsAppFloat";
 import { PortfolioProvider } from "./components/PortfolioProvider";
 import { readPortfolio } from "@/lib/portfolio-store";
 
@@ -37,6 +38,7 @@ export default async function Home() {
           <Contact />
           <Footer />
         </div>
+        <WhatsAppFloat />
       </main>
     </PortfolioProvider>
   );

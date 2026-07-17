@@ -1,13 +1,16 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Mail, Shield } from "lucide-react";
+import { Mail, Phone, Shield } from "lucide-react";
 import GithubIcon from "./icons/GithubIcon";
 import LinkedinIcon from "./icons/LinkedinIcon";
+import { WhatsAppGlyph } from "./WhatsAppFloat";
+import { formatDisplayPhone, telHref, whatsAppChatUrl } from "@/lib/phone";
 import { usePortfolio } from "./PortfolioProvider";
 
 export default function Footer() {
   const { site } = usePortfolio();
+  const phoneDisplay = formatDisplayPhone(site.phone);
 
   return (
     <footer className="relative py-10 px-6 overflow-hidden">
@@ -25,20 +28,32 @@ export default function Footer() {
       </div>
 
       <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-        <motion.p className="text-xs"
-          style={{ color:"rgba(215,185,144,0.88)" }}
-          animate={{ opacity:[.78,.95,.78] }} transition={{ duration:5, repeat:Infinity }}>
-          (c) {new Date().getFullYear()} {site.fullName} - Built with Next.js &amp; Tailwind CSS
-        </motion.p>
+        <div className="text-center sm:text-left">
+          <motion.p className="text-xs"
+            style={{ color:"rgba(215,185,144,0.88)" }}
+            animate={{ opacity:[.78,.95,.78] }} transition={{ duration:5, repeat:Infinity }}>
+            (c) {new Date().getFullYear()} {site.fullName} - Built with Next.js &amp; Tailwind CSS
+          </motion.p>
+          {site.phone?.trim() && (
+            <a
+              href={telHref(site.phone)}
+              className="mt-1 inline-flex items-center gap-1.5 text-xs text-[#e6bd82] hover:text-[#fff2df] transition-colors"
+            >
+              <Phone size={12} />
+              {phoneDisplay}
+            </a>
+          )}
+        </div>
 
         <div className="flex items-center gap-4">
           {[
             { href:site.github,            icon:<GithubIcon width={16} height={16} />,   label:"GitHub",   color:"#e6bd82" },
             { href:site.linkedin,          icon:<LinkedinIcon width={16} height={16} />, label:"LinkedIn", color:"#d49a57" },
             { href:`mailto:${site.email}`, icon:<Mail size={16} />,                      label:"Email",    color:"#c47d45" },
+            { href:whatsAppChatUrl(site.phone), icon:<WhatsAppGlyph size={16} />,        label:"WhatsApp", color:"#25d366" },
           ].map(({ href, icon, label, color }) => (
             <motion.a key={label} href={href}
-              target={href.startsWith("mailto")?undefined:"_blank"}
+              target={href.startsWith("mailto") || href.startsWith("tel:") ? undefined : "_blank"}
               rel="noopener noreferrer" aria-label={label}
               whileHover={{ scale:1.25, y:-3 }}
               style={{ color:"rgba(215,185,144,0.88)" }}
