@@ -24,14 +24,21 @@ Copy `.env.example` to `.env.local` and set:
 - `RESEND_API_KEY` (for contact form emails)
 - `NEXT_PUBLIC_SITE_URL` — **your live site URL** (required for SEO canonical, sitemap, OG, password-reset links)
 
-### Vercel admin saves (important)
+### Vercel admin saves (MySQL — recommended)
 
-Vercel’s filesystem is **read-only**, so Admin → Save cannot write `data/portfolio.json` in production.
+Vercel’s filesystem is **read-only**, so Admin → Save cannot persist `data/portfolio.json` in production.
 
-1. In your Vercel project → **Storage** → create a **Blob** store  
-2. Connect it to the project (this sets `BLOB_READ_WRITE_TOKEN`)  
-3. **Redeploy**  
-4. Save again from `/admin` — content is stored in Blob and shown on the live site
+**Use MySQL** (best approach for this CMS):
+
+1. Create a MySQL database (PlanetScale, Railway, Aiven, cPanel, RDS, etc.)
+2. Run `sql/schema.sql` once on that database
+3. In Vercel → **Settings → Environment Variables**, set:
+   - `DATABASE_URL=mysql://USER:PASSWORD@HOST:3306/DB_NAME`  
+     (or `MYSQL_HOST` / `MYSQL_USER` / `MYSQL_PASSWORD` / `MYSQL_DATABASE`)
+4. **Redeploy**
+5. Save from `/admin` — data is stored in the `cms_documents` table
+
+Priority: **MySQL → Blob → local files**. Locally, files still work without a DB.
 
 ## SEO (on-page — built in)
 

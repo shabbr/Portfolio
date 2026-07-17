@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
-import { isBlobConfigured, isVercelRuntime } from "@/lib/blob-store";
+import {
+  canPersistCmsWrites,
+  cmsWriteUnavailableMessage,
+  hasRemoteCmsBackend,
+} from "@/lib/cms-store";
 import { writePortfolio } from "@/lib/portfolio-store";
 import type { PortfolioData } from "@/lib/portfolio-types";
 
@@ -31,14 +35,12 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: "Invalid portfolio payload." }, { status: 400 });
     }
 
-    if (isVercelRuntime() && !isBlobConfigured()) {
-      return NextResponse.json(
-        {
-          error:
-            "Live saves need Vercel Blob. Open Vercel → Storage → Create Blob store for this project, connect it, then Redeploy. Local file saves cannot persist on Vercel.",
-        },
-        { status: 503 },
-      );
+    // On Vercel, filesystem writes do not persist — require MySQL (or Blob).
+    if (process.env.VERCEL && !hasRemoteCmsBackend()) {
+      return NextResponse.json({ error: cmsWriteUnavailableMessage() }, { status: 503 });
+    }
+    if (!canPersistCmsWrites()) {
+      return NextResponse.json({ error: cmsWriteUnavailableMessage() }, { status: 503 });
     }
 
     const saved = await writePortfolio(data);

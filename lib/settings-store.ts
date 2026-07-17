@@ -1,12 +1,12 @@
 import { promises as fs } from "fs";
 import path from "path";
 import {
-  isBlobConfigured,
-  isVercelRuntime,
-  readJsonBlob,
+  cmsWriteUnavailableMessage,
+  hasRemoteCmsBackend,
+  readCmsDocument,
   storageWriteHint,
-  writeJsonBlob,
-} from "./blob-store";
+  writeCmsDocument,
+} from "./cms-store";
 
 export type EmailSettings = {
   resendApiKey: string;
@@ -29,7 +29,6 @@ export type AppSettings = {
 };
 
 const SETTINGS_PATH = path.join(process.cwd(), "data", "settings.json");
-const BLOB_PATH = "cms/settings.json";
 
 function defaultsFromEnv(): AppSettings {
   return {
@@ -76,26 +75,33 @@ async function readSettingsFromDisk(): Promise<AppSettings | null> {
 }
 
 export async function readSettings(): Promise<AppSettings> {
-  if (isBlobConfigured()) {
-    const remote = await readJsonBlob<Partial<AppSettings>>(BLOB_PATH);
-    if (remote) return mergeSettings(remote);
+  const remote = await readCmsDocument<Partial<AppSettings>>("settings");
+  if (remote) return mergeSettings(remote);
 
-    const disk = await readSettingsFromDisk();
-    const seeded = disk ?? defaultsFromEnv();
+  const disk = await readSettingsFromDisk();
+  const seeded = disk ?? defaultsFromEnv();
+
+  if (hasRemoteCmsBackend()) {
     try {
-      await writeJsonBlob(BLOB_PATH, seeded);
+      await writeCmsDocument("settings", seeded);
     } catch {
-      // ignore seed failures; env defaults still apply
+      // env/disk defaults still apply
     }
-    return seeded;
   }
 
-  return (await readSettingsFromDisk()) ?? defaultsFromEnv();
+  return seeded;
 }
 
 export async function writeSettings(settings: AppSettings): Promise<void> {
-  if (isBlobConfigured()) {
-    await writeJsonBlob(BLOB_PATH, settings);
+  if (hasRemoteCmsBackend()) {
+    await writeCmsDocument("settings", settings);
+    try {
+      const dir = path.dirname(SETTINGS_PATH);
+      await fs.mkdir(dir, { recursive: true });
+      await fs.writeFile(SETTINGS_PATH, JSON.stringify(settings, null, 2) + "\n", "utf8");
+    } catch {
+      // ignore disk mirror failures on Vercel
+    }
     return;
   }
 
@@ -104,10 +110,7 @@ export async function writeSettings(settings: AppSettings): Promise<void> {
     await fs.mkdir(dir, { recursive: true });
     await fs.writeFile(SETTINGS_PATH, JSON.stringify(settings, null, 2) + "\n", "utf8");
   } catch (err) {
-    if (isVercelRuntime()) {
-      throw new Error(storageWriteHint(err));
-    }
-    throw new Error(storageWriteHint(err));
+    throw new Error(storageWriteHint(err) || cmsWriteUnavailableMessage());
   }
 }
 

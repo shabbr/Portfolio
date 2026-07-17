@@ -69,8 +69,8 @@ export function storageWriteHint(err: unknown): string {
   ) {
     return (
       "Cannot write files on Vercel’s serverless filesystem. " +
-      "Create a Vercel Blob store for this project (Storage → Blob), " +
-      "set BLOB_READ_WRITE_TOKEN, redeploy, then save again."
+      "Set DATABASE_URL (MySQL) and run sql/schema.sql, then redeploy. " +
+      "Optional fallback: Vercel Blob (BLOB_READ_WRITE_TOKEN)."
     );
   }
 
