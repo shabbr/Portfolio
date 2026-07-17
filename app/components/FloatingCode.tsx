@@ -1,6 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { usePageVisible } from "@/lib/usePageVisible";
+import { useIsScrolling } from "@/lib/useIsScrolling";
 
 interface FloatingCodeProps {
   className?: string;
@@ -17,6 +19,10 @@ const CODE_ELEMENTS = [
 ];
 
 export default function FloatingCode({ className = "" }: FloatingCodeProps) {
+  const pageVisible = usePageVisible();
+  const scrolling = useIsScrolling(160);
+  const active = pageVisible && !scrolling;
+
   return (
     <div className={`fixed inset-0 pointer-events-none overflow-hidden ${className}`} aria-hidden="true">
       {CODE_ELEMENTS.map((el, i) => (
@@ -25,11 +31,15 @@ export default function FloatingCode({ className = "" }: FloatingCodeProps) {
           className="absolute text-xs font-mono font-bold opacity-0"
           style={{ color: "#e6bd82" }}
           initial={{ x: el.x, y: el.y, opacity: 0 }}
-          animate={{
-            y: [el.y, `${parseFloat(el.y) - 40}%`, `${parseFloat(el.y) - 80}%`],
-            opacity: [0, 0.4, 0],
-            x: [el.x, `${parseFloat(el.x) + Math.sin(i) * 20}%`],
-          }}
+          animate={
+            active
+              ? {
+                  y: [el.y, `${parseFloat(el.y) - 40}%`, `${parseFloat(el.y) - 80}%`],
+                  opacity: [0, 0.4, 0],
+                  x: [el.x, `${parseFloat(el.x) + Math.sin(i) * 20}%`],
+                }
+              : { opacity: 0 }
+          }
           transition={{
             duration: el.dur,
             delay: el.delay,
@@ -40,7 +50,6 @@ export default function FloatingCode({ className = "" }: FloatingCodeProps) {
           {el.symbol}
         </motion.div>
       ))}
-      
     </div>
   );
 }

@@ -1,6 +1,6 @@
 # Portfolio
 
-Personal portfolio built with Next.js  includes admin CMS, contact form email delivery, and password reset.
+Personal portfolio for **Shabbar Abbas** — Full-Stack Engineer & Laravel Specialist. Built with Next.js, includes an admin CMS, contact email delivery, and password reset.
 
 ## Getting Started
 
@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3000](http://localhost:3000).
 
 ## Admin
 
@@ -22,3 +22,32 @@ Copy `.env.example` to `.env.local` and set:
 
 - `ADMIN_PASSWORD` / `ADMIN_SECRET`
 - `RESEND_API_KEY` (for contact form emails)
+- `NEXT_PUBLIC_SITE_URL` — **your live site URL** (required for SEO canonical, sitemap, OG, password-reset links)
+
+## SEO (on-page — built in)
+
+- Semantic metadata (title template, description, keywords)
+- Canonical URL + Open Graph + Twitter cards
+- `robots.txt` + `sitemap.xml`
+- JSON-LD (`Person` + `WebSite`)
+- Brand logo (`/logo.svg`) for favicon / Apple icon / share image
+- Admin routes disallowed from indexing
+
+### Off-page ranking (do after deploy)
+
+These cannot be done in code — you do them once the site is live:
+
+1. Set `NEXT_PUBLIC_SITE_URL` to the production URL
+2. [Google Search Console](https://search.google.com/search-console) → add property → submit `sitemap.xml`
+3. [Bing Webmaster Tools](https://www.bing.com/webmasters) → submit sitemap
+4. Share on LinkedIn / GitHub profile website field
+5. Build quality backlinks (guest posts, directory listings, IconMarvel footer link)
+6. Keep content updated via Admin (projects, experience)
+
+## Logo
+
+Brand mark is a rounded **SA** monogram (warm gold on dark), not a geometric triangle. Files:
+
+- `public/logo.svg` — primary brand logo
+- `app/icon.svg` — favicon
+- `app/apple-icon.tsx` / `app/opengraph-image.tsx` — generated icons & OG image

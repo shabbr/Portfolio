@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, Shield, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useOrderedNav, usePortfolio } from "./PortfolioProvider";
 
 export default function Navbar() {
@@ -11,30 +11,54 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState("home");
+  /** Ignore scroll-spy briefly after a nav click so Home doesn't steal active. */
+  const clickLockUntil = useRef(0);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    let ticking = false;
 
-  useEffect(() => {
-    const obs = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) if (e.isIntersecting) setActive(e.target.id);
-      },
-      { threshold: 0.35 }
-    );
-    navLinks.forEach(({ href }) => {
-      const el = document.querySelector(href);
-      if (el) obs.observe(el);
-    });
-    return () => obs.disconnect();
+    const updateActiveFromScroll = () => {
+      if (Date.now() < clickLockUntil.current) return;
+
+      // Pick the last section whose top has crossed below the sticky nav.
+      const marker = 96;
+      let current = "home";
+      for (const { href } of navLinks) {
+        const id = href.replace("#", "");
+        const el = document.getElementById(id);
+        if (!el) continue;
+        if (el.getBoundingClientRect().top <= marker) {
+          current = id;
+        }
+      }
+      setActive((prev) => (prev === current ? prev : current));
+    };
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        setScrolled(window.scrollY > 40);
+        updateActiveFromScroll();
+        ticking = false;
+      });
+    };
+
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
   }, [navLinks]);
 
   const go = (href: string) => {
+    const id = href.replace("#", "");
+    setActive(id);
     setOpen(false);
-    document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
+    clickLockUntil.current = Date.now() + 1200;
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -107,36 +131,15 @@ export default function Navbar() {
                 </li>
               );
             })}
-            <li>
-              <a
-                href="/admin"
-                className="ml-1 inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs sm:text-sm font-medium text-[#1d1009] transition hover:brightness-110"
-                style={{ background: "linear-gradient(135deg,#e6bd82,#c47d45)" }}
-              >
-                <Shield size={13} />
-                Admin
-              </a>
-            </li>
           </ul>
 
-          <div className="flex items-center gap-2 md:hidden">
-            <a
-              href="/admin"
-              className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-[11px] font-semibold text-[#1d1009]"
-              style={{ background: "linear-gradient(135deg,#e6bd82,#c47d45)" }}
-              aria-label="Admin dashboard"
-            >
-              <Shield size={12} />
-              Admin
-            </a>
-            <button
-              className="text-[#d7b990] hover:text-[#fff2df] transition-colors p-1"
-              onClick={() => setOpen(!open)}
-              aria-label="Toggle menu"
-            >
-              {open ? <X size={20} /> : <Menu size={20} />}
-            </button>
-          </div>
+          <button
+            className="md:hidden text-[#d7b990] hover:text-[#fff2df] transition-colors p-1"
+            onClick={() => setOpen(!open)}
+            aria-label="Toggle menu"
+          >
+            {open ? <X size={20} /> : <Menu size={20} />}
+          </button>
         </div>
       </div>
 
@@ -156,25 +159,24 @@ export default function Navbar() {
             }}
           >
             <ul className="px-4 py-3 flex flex-col gap-1">
-              {navLinks.map(({ label, href }) => (
-                <li key={href}>
-                  <button
-                    onClick={() => go(href)}
-                    className="w-full text-left px-4 py-2 rounded-lg text-[#d7b990] hover:text-[#fff2df] hover:bg-[rgba(92,56,35,0.32)] transition-all text-xs sm:text-sm font-medium"
-                  >
-                    {label}
-                  </button>
-                </li>
-              ))}
-              <li>
-                <a
-                  href="/admin"
-                  className="w-full flex items-center gap-2 px-4 py-2 rounded-lg text-[#e6bd82] hover:bg-[rgba(92,56,35,0.32)] transition-all text-xs sm:text-sm font-medium"
-                >
-                  <Shield size={14} />
-                  Admin dashboard
-                </a>
-              </li>
+              {navLinks.map(({ label, href }) => {
+                const id = href.replace("#", "");
+                const isActive = active === id;
+                return (
+                  <li key={href}>
+                    <button
+                      onClick={() => go(href)}
+                      className={`w-full text-left px-4 py-2 rounded-lg transition-all text-xs sm:text-sm font-medium ${
+                        isActive
+                          ? "text-[#e6bd82] bg-[rgba(92,56,35,0.32)]"
+                          : "text-[#d7b990] hover:text-[#fff2df] hover:bg-[rgba(92,56,35,0.32)]"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  </li>
+                );
+              })}
             </ul>
           </motion.div>
         )}

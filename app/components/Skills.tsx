@@ -1,7 +1,8 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import { useRef } from "react";
+import { useReadyInView } from "@/lib/useReadyInView";
 import { useOrderedSkillCategories, useOrderedSkillLevels } from "./PortfolioProvider";
 
 const BAR_COLORS = [
@@ -22,7 +23,7 @@ export default function Skills() {
   const skillLevels = useOrderedSkillLevels();
   const skillCategories = useOrderedSkillCategories();
   const ref = useRef(null);
-  const inView = useInView(ref, { once:true, margin:"-80px" });
+  const inView = useReadyInView(ref, { once:true, margin:"-80px" });
 
   return (
     <section id="skills" className="relative py-20 px-4 overflow-hidden sm:py-24 sm:px-6 lg:py-28">
@@ -30,7 +31,8 @@ export default function Skills() {
         style={{ width:"900px", height:"450px",
           background:"radial-gradient(ellipse at top,rgba(212,154,87,0.16) 0%,rgba(92,56,35,0.12) 45%,transparent 70%)",
           filter:"blur(30px)" }}
-        animate={{ opacity:[.4,.85,.4] }} transition={{ duration:6, repeat:Infinity }}
+        animate={inView ? { opacity:[.4,.85,.4] } : { opacity: .5 }}
+        transition={{ duration:6, repeat:Infinity }}
         aria-hidden="true" />
 
       <div className="max-w-5xl mx-auto relative z-10" ref={ref}>
@@ -73,7 +75,7 @@ export default function Skills() {
                     style={{ background:BAR_COLORS[i%4], boxShadow:"0 0 14px rgba(196,125,69,.32)" }}>
                     <motion.span className="absolute inset-0 block"
                       style={{ background:"linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent)", width:"55%" }}
-                      animate={{ left:["-55%","155%"] }}
+                      animate={inView ? { left:["-55%","155%"] } : { left: "-55%" }}
                       transition={{ duration:2.5, repeat:Infinity, delay:1.3+i*.12, ease:"linear" }} />
                   </motion.div>
                 </div>
@@ -103,7 +105,7 @@ export default function Skills() {
                   <div className="flex items-center gap-2 mb-3 pl-2">
                     <motion.div className="w-2 h-2 rounded-full"
                       style={{ background:c.color }}
-                      animate={{ scale:[1,1.8,1], opacity:[.5,1,.5] }}
+                      animate={inView ? { scale:[1,1.8,1], opacity:[.5,1,.5] } : { scale: 1, opacity: .75 }}
                       transition={{ duration:2.2, repeat:Infinity, delay:ci*.3 }} />
                     <span className="text-[10px] font-bold tracking-[.22em] uppercase" style={{ color:c.color }}>{cat.name}</span>
                   </div>

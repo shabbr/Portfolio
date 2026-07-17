@@ -1,13 +1,15 @@
 import { promises as fs } from "fs";
 import path from "path";
+import { cache } from "react";
 import type { PortfolioData } from "./portfolio-types";
 
 const DATA_PATH = path.join(process.cwd(), "data", "portfolio.json");
 
-export async function readPortfolio(): Promise<PortfolioData> {
+/** Deduplicate portfolio reads within a single request (page + metadata). */
+export const readPortfolio = cache(async (): Promise<PortfolioData> => {
   const raw = await fs.readFile(DATA_PATH, "utf8");
   return JSON.parse(raw) as PortfolioData;
-}
+});
 
 export async function writePortfolio(data: PortfolioData): Promise<void> {
   const normalized = normalizePortfolio(data);

@@ -1,10 +1,11 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import { useRef, useState } from "react";
 import { AlertCircle, CheckCircle, Mail, MapPin, MessageSquareText, Send, TerminalSquare } from "lucide-react";
 import GithubIcon from "./icons/GithubIcon";
 import LinkedinIcon from "./icons/LinkedinIcon";
+import { useReadyInView } from "@/lib/useReadyInView";
 import { usePortfolio } from "./PortfolioProvider";
 
 type Status = "idle" | "sending" | "success" | "error";
@@ -12,7 +13,7 @@ type Status = "idle" | "sending" | "success" | "error";
 export default function Contact() {
   const { site } = usePortfolio();
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const inView = useReadyInView(ref, { once: true, margin: "-80px" });
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState("");

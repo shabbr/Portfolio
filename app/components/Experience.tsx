@@ -1,9 +1,10 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import { useRef } from "react";
 import { Briefcase, MapPin, Calendar } from "lucide-react";
 import { useTilt } from "@/lib/useTilt";
+import { useReadyInView } from "@/lib/useReadyInView";
 import { useVisibleExperience } from "./PortfolioProvider";
 import type { ExperienceItem } from "@/lib/portfolio-types";
 
@@ -15,8 +16,8 @@ function ExpCard({ exp, i, inView }: { exp: ExperienceItem; i: number; inView: b
 
   return (
     <motion.div
-      initial={{ opacity:0, x:-60, filter:"blur(8px)" }}
-      animate={inView?{opacity:1,x:0,filter:"blur(0px)"}:{}}
+      initial={{ opacity:0, x:-60 }}
+      animate={inView?{opacity:1,x:0}:{}}
       transition={{ duration:.7, delay:.2+i*.2 }}
       className="relative pl-16 perspective-1000">
 
@@ -27,14 +28,15 @@ function ExpCard({ exp, i, inView }: { exp: ExperienceItem; i: number; inView: b
           background: exp.current ? accent : "rgba(24,14,10,0.92)",
           borderColor: accent,
         }}
-        animate={exp.current ? {
+        animate={exp.current && inView ? {
           boxShadow:[`0 0 6px ${accent}66`,`0 0 22px ${accent}cc`,`0 0 6px ${accent}66`],
         } : {}}
         transition={{ duration:2, repeat:Infinity }}>
         {exp.current && (
           <motion.div className="w-2 h-2 rounded-full"
             style={{ background:"#1d1009" }}
-            animate={{ scale:[1,0.5,1] }} transition={{ duration:1.5, repeat:Infinity }} />
+            animate={inView ? { scale:[1,0.5,1] } : { scale: 1 }}
+            transition={{ duration:1.5, repeat:Infinity }} />
         )}
       </motion.div>
 
@@ -46,7 +48,6 @@ function ExpCard({ exp, i, inView }: { exp: ExperienceItem; i: number; inView: b
         className="p-5 sm:p-6 relative overflow-hidden rounded-[1.2rem]"
         style={{
           transition:"transform .25s cubic-bezier(.4,0,.2,1)",
-          willChange:"transform",
           background:"linear-gradient(145deg,rgba(70,43,27,.88),rgba(24,14,10,.84))",
           border:"1px solid rgba(230,189,130,.14)",
           boxShadow:"0 20px 60px rgba(20,9,4,.34), inset 0 1px 0 rgba(255,225,180,.07)",
@@ -55,7 +56,8 @@ function ExpCard({ exp, i, inView }: { exp: ExperienceItem; i: number; inView: b
         {/* Top accent bar */}
         <motion.div className="absolute top-0 left-0 right-0 h-[2px] rounded-t-[1.25rem]"
           style={{ background:`linear-gradient(90deg,transparent,${accent}88,transparent)` }}
-          animate={{ opacity:[0.4,1,0.4] }} transition={{ duration:3, repeat:Infinity, delay:i*.5 }} />
+          animate={inView ? { opacity:[0.4,1,0.4] } : { opacity: 0.4 }}
+          transition={{ duration:3, repeat:Infinity, delay:i*.5 }} />
 
         {/* Background glow */}
         <div className="absolute top-0 right-0 w-48 h-48 pointer-events-none opacity-[0.04]"
@@ -72,7 +74,8 @@ function ExpCard({ exp, i, inView }: { exp: ExperienceItem; i: number; inView: b
             </div>
             <motion.p className="font-semibold text-sm mb-1"
               style={{ color:accent }}
-              animate={{ opacity:[.7,1,.7] }} transition={{ duration:3, repeat:Infinity, delay:i*.5 }}>
+              animate={inView ? { opacity:[.7,1,.7] } : { opacity: .85 }}
+              transition={{ duration:3, repeat:Infinity, delay:i*.5 }}>
               {exp.company}
             </motion.p>
             <div className="flex items-center gap-1 text-xs" style={{ color:"rgba(215,185,144,0.62)" }}>
@@ -88,7 +91,7 @@ function ExpCard({ exp, i, inView }: { exp: ExperienceItem; i: number; inView: b
               <motion.span
                 className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold"
                 style={{ background:`${accent}18`, color:accent, border:`1px solid ${accent}44` }}
-                animate={{ borderColor:[`${accent}22`,`${accent}88`,`${accent}22`] }}
+                animate={inView ? { borderColor:[`${accent}22`,`${accent}88`,`${accent}22`] } : {}}
                 transition={{ duration:2, repeat:Infinity }}>
                 Current
               </motion.span>
@@ -105,7 +108,8 @@ function ExpCard({ exp, i, inView }: { exp: ExperienceItem; i: number; inView: b
               style={{ color:"rgba(239,222,201,0.76)" }}>
               <motion.span className="mt-1.5 shrink-0 text-[8px]"
                 style={{ color:accent }}
-                animate={{ opacity:[.5,1,.5] }} transition={{ duration:2.2, repeat:Infinity, delay:j*.3 }}>
+                animate={inView ? { opacity:[.5,1,.5] } : { opacity: .7 }}
+                transition={{ duration:2.2, repeat:Infinity, delay:j*.3 }}>
                 -
               </motion.span>
               {pt}
@@ -120,7 +124,7 @@ function ExpCard({ exp, i, inView }: { exp: ExperienceItem; i: number; inView: b
 export default function Experience() {
   const experience = useVisibleExperience();
   const ref = useRef(null);
-  const inView = useInView(ref, { once:true, margin:"-80px" });
+  const inView = useReadyInView(ref, { once:true, margin:"-80px" });
 
   return (
     <section id="experience" className="relative py-20 px-4 overflow-hidden sm:py-24 sm:px-6 lg:py-28">
@@ -128,7 +132,8 @@ export default function Experience() {
       {[12,30,50,70,88].map((l, i) => (
         <motion.div key={i} className="absolute top-0 bottom-0 w-px pointer-events-none"
           style={{ left:`${l}%`, background:"linear-gradient(180deg,transparent,rgba(230,189,130,.055),transparent)" }}
-          animate={{ opacity:[.2,.8,.2] }} transition={{ duration:3+i, repeat:Infinity, delay:i*.4 }}
+          animate={inView ? { opacity:[.2,.8,.2] } : { opacity: .35 }}
+          transition={{ duration:3+i, repeat:Infinity, delay:i*.4 }}
           aria-hidden="true" />
       ))}
 

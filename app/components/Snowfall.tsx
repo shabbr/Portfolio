@@ -46,15 +46,28 @@ export default function Snowfall() {
 
   useEffect(() => {
     const canvas = ref.current; if (!canvas) return;
-    const ctx = canvas.getContext("2d"); if (!ctx) return;
-    let raf: number;
+    const ctx = canvas.getContext("2d", { alpha: true }); if (!ctx) return;
+    let raf = 0;
     let windGust = 0, windTarget = 0, windTimer = 0;
+    let running = true;
 
-    const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+    const resize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      canvas.width = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+      canvas.style.width = `${w}px`;
+      canvas.style.height = `${h}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
     resize();
-    window.addEventListener("resize", resize);
+    window.addEventListener("resize", resize, { passive: true });
 
-    const flakes: Flake[] = Array.from({ length: 170 }, () => {
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    const count = isMobile ? 55 : 100;
+
+    const flakes: Flake[] = Array.from({ length: count }, () => {
       const t = Math.random();
       return {
         x: Math.random() * window.innerWidth,
@@ -71,8 +84,25 @@ export default function Snowfall() {
       };
     });
 
+    let scrolling = false;
+    let scrollTimer = 0;
+    const onScroll = () => {
+      scrolling = true;
+      window.clearTimeout(scrollTimer);
+      scrollTimer = window.setTimeout(() => { scrolling = false; }, 140);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+
     const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (!running) return;
+      if (document.hidden || scrolling) {
+        raf = requestAnimationFrame(draw);
+        return;
+      }
+
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      ctx.clearRect(0, 0, width, height);
       windTimer--;
       if (windTimer <= 0) { windTarget = (Math.random() - 0.5) * 1.1; windTimer = 200 + Math.random() * 280; }
       windGust += (windTarget - windGust) * 0.004;
@@ -80,9 +110,9 @@ export default function Snowfall() {
       for (const f of flakes) {
         f.wobble += f.wobbleSpeed; f.rot += f.rotSpeed;
         f.y += f.speed; f.x += f.drift + Math.sin(f.wobble) * 0.35 + windGust;
-        if (f.y > canvas.height + 8) { f.y = -8; f.x = Math.random() * canvas.width; }
-        if (f.x > canvas.width + 8) f.x = -8;
-        if (f.x < -8) f.x = canvas.width + 8;
+        if (f.y > height + 8) { f.y = -8; f.x = Math.random() * width; }
+        if (f.x > width + 8) f.x = -8;
+        if (f.x < -8) f.x = width + 8;
 
         if (f.type === 1) {
           crystalPath(ctx, f.x, f.y, f.r, f.rot, f.opacity * 0.75);
@@ -103,7 +133,13 @@ export default function Snowfall() {
       raf = requestAnimationFrame(draw);
     };
     draw();
-    return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", resize); };
+    return () => {
+      running = false;
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", resize);
+      window.removeEventListener("scroll", onScroll);
+      window.clearTimeout(scrollTimer);
+    };
   }, []);
 
   return <canvas ref={ref} className="fixed inset-0 pointer-events-none z-[1]" aria-hidden="true" />;

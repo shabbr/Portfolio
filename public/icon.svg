@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Shabbar Abbas">
+  <defs>
+    <linearGradient id="saGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e6bd82"/>
+      <stop offset="55%" stop-color="#d49a57"/>
+      <stop offset="100%" stop-color="#c47d45"/>
+    </linearGradient>
+    <linearGradient id="saInner" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2a160c"/>
+      <stop offset="100%" stop-color="#120b08"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="url(#saInner)"/>
+  <rect x="6" y="6" width="116" height="116" rx="24" fill="none" stroke="url(#saGrad)" stroke-width="3"/>
+  <text
+    x="64"
+    y="78"
+    text-anchor="middle"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="52"
+    font-weight="700"
+    letter-spacing="1"
+    fill="url(#saGrad)"
+  >SA</text>
+</svg>

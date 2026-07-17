@@ -2,14 +2,16 @@
 
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Float } from "@react-three/drei";
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import { Code2, Database, GitBranch, Server, TerminalSquare } from "lucide-react";
-import * as THREE from "three";
+import type { Group } from "three";
 import { useTilt } from "@/lib/useTilt";
+import { useReadyInView } from "@/lib/useReadyInView";
 import AboutBackground from "./AboutBackground";
 import { usePortfolio } from "./PortfolioProvider";
 import { sortByOrder } from "@/lib/portfolio-types";
+import { usePageVisible } from "@/lib/usePageVisible";
 
 const ICON_MAP = {
   Server,
@@ -42,11 +44,11 @@ const particles = Array.from({ length: 26 }, (_, i) => {
   };
 });
 
-function AboutScene() {
-  const group = useRef<THREE.Group>(null);
+function AboutScene({ active }: { active: boolean }) {
+  const group = useRef<Group>(null);
 
   useFrame(({ clock, pointer }) => {
-    if (!group.current) return;
+    if (!active || !group.current) return;
     group.current.rotation.y = Math.sin(clock.elapsedTime * 0.28) * 0.18 + pointer.x * 0.14;
     group.current.rotation.x = -0.08 + pointer.y * 0.08;
   });
@@ -128,22 +130,54 @@ function AboutScene() {
 }
 
 function AboutOrbital() {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const pageVisible = usePageVisible();
+  const [inView, setInView] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [mountGl, setMountGl] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(window.matchMedia("(max-width: 768px)").matches);
+    const el = wrapRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { rootMargin: "160px", threshold: 0.05 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  // Mount WebGL after entrance motions start — avoids first-open freeze
+  useEffect(() => {
+    if (!inView) return;
+    const t = window.setTimeout(() => setMountGl(true), 450);
+    return () => window.clearTimeout(t);
+  }, [inView]);
+
+  const active = inView && pageVisible && mountGl;
+
   return (
-    <div className="h-[240px] overflow-hidden rounded-[1.35rem] sm:h-[280px] md:h-[320px]"
+    <div
+      ref={wrapRef}
+      className="h-[240px] overflow-hidden rounded-[1.35rem] sm:h-[280px] md:h-[320px]"
       style={{
         background:"linear-gradient(145deg,rgba(70,43,27,.62),rgba(18,10,7,.58))",
         border:"1px solid rgba(230,189,130,.14)",
         boxShadow:"0 22px 70px rgba(20,9,4,.32)",
       }}
       aria-hidden="true">
-      <Canvas
-        dpr={[1, 1.6]}
-        camera={{ position: [0, 0, 5.2], fov: 42 }}
-        gl={{ alpha: true, antialias: true }}
-        className="pointer-events-none"
-      >
-        <AboutScene />
-      </Canvas>
+      {mountGl ? (
+        <Canvas
+          frameloop={active ? "always" : "demand"}
+          dpr={[1, isMobile ? 1.25 : 1.5]}
+          camera={{ position: [0, 0, 5.2], fov: 42 }}
+          gl={{ alpha: true, antialias: !isMobile, powerPreference: "high-performance" }}
+          className="pointer-events-none"
+        >
+          <AboutScene active={active} />
+        </Canvas>
+      ) : null}
     </div>
   );
 }
@@ -161,7 +195,6 @@ function HighlightCard({ icon, title, desc, color, bg, i, inView }:
         className="p-4 sm:p-5 cursor-default h-full relative overflow-hidden rounded-[1.2rem]"
         style={{
           transition:"transform .25s cubic-bezier(.4,0,.2,1)",
-          willChange:"transform",
           background:"linear-gradient(145deg,rgba(70,43,27,.88),rgba(28,17,12,.82))",
           border:"1px solid rgba(230,189,130,.16)",
           boxShadow:"0 18px 50px rgba(24,12,6,.34), inset 0 1px 0 rgba(255,225,180,.08)",
@@ -173,7 +206,8 @@ function HighlightCard({ icon, title, desc, color, bg, i, inView }:
 
         <motion.div className="mb-3 w-10 h-10 rounded-2xl flex items-center justify-center relative z-10"
           style={{ color, background:bg, border:`1px solid ${color}44`, boxShadow:`0 12px 30px ${color}18` }}
-          animate={{ rotate:[0,5,-5,0] }} transition={{ duration:4+i, repeat:Infinity, delay:i*.6 }}>
+          animate={inView ? { rotate:[0,5,-5,0] } : { rotate: 0 }}
+          transition={{ duration:4+i, repeat:Infinity, delay:i*.6 }}>
           {icon}
         </motion.div>
         <h3 className="font-semibold text-sm mb-1.5 relative z-10" style={{ color:"#fff7e8" }}>{title}</h3>
@@ -182,7 +216,8 @@ function HighlightCard({ icon, title, desc, color, bg, i, inView }:
         {/* Bottom accent line */}
         <motion.div className="absolute bottom-0 left-0 right-0 h-[2px] rounded-b-[1.25rem]"
           style={{ background:`linear-gradient(90deg,transparent,${color}88,transparent)` }}
-          animate={{ opacity:[0.3,1,0.3] }} transition={{ duration:2.5+i*.4, repeat:Infinity, delay:i*.35 }} />
+          animate={inView ? { opacity:[0.3,1,0.3] } : { opacity: 0.3 }}
+          transition={{ duration:2.5+i*.4, repeat:Infinity, delay:i*.35 }} />
       </div>
     </motion.div>
   );
@@ -191,7 +226,7 @@ function HighlightCard({ icon, title, desc, color, bg, i, inView }:
 export default function About() {
   const { about, site } = usePortfolio();
   const ref = useRef(null);
-  const inView = useInView(ref, { once:true, margin:"-80px" });
+  const inView = useReadyInView(ref, { once:true, margin:"-80px" });
   const stats = sortByOrder(about.stats);
   const highlights = sortByOrder(about.highlights);
 

@@ -1,10 +1,11 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import { useRef } from "react";
 import GithubIcon from "./icons/GithubIcon";
 import LinkedinIcon from "./icons/LinkedinIcon";
 import { useTilt } from "@/lib/useTilt";
+import { useReadyInView } from "@/lib/useReadyInView";
 import { usePortfolio, useVisibleProjects } from "./PortfolioProvider";
 import type { ProjectItem } from "@/lib/portfolio-types";
 
@@ -25,8 +26,8 @@ function ProjectCard({ project, i, inView }: { project: ProjectItem; i: number; 
 
   return (
     <motion.div
-      initial={{ opacity:0, y:60, rotateX:15, filter:"blur(8px)" }}
-      animate={inView ? { opacity:1, y:0, rotateX:0, filter:"blur(0px)" } : {}}
+      initial={{ opacity:0, y:60 }}
+      animate={inView ? { opacity:1, y:0 } : {}}
       transition={{ duration:.7, delay:i*.12, ease:[.16,1,.3,1] }}
       className="perspective-1000">
       <div
@@ -36,7 +37,6 @@ function ProjectCard({ project, i, inView }: { project: ProjectItem; i: number; 
         className="p-5 sm:p-6 flex flex-col gap-4 h-full cursor-default relative overflow-hidden group rounded-[1.2rem]"
         style={{
           transition:"transform .25s cubic-bezier(.4,0,.2,1)",
-          willChange:"transform",
           background:"linear-gradient(145deg,rgba(70,43,27,.88),rgba(24,14,10,.84))",
           border:"1px solid rgba(230,189,130,.14)",
           boxShadow:"0 20px 60px rgba(20,9,4,.34), inset 0 1px 0 rgba(255,225,180,.07)",
@@ -51,7 +51,7 @@ function ProjectCard({ project, i, inView }: { project: ProjectItem; i: number; 
         <div className="absolute inset-0 rounded-[1.25rem] overflow-hidden pointer-events-none">
           <motion.div className="absolute left-0 right-0 h-px"
             style={{ background:`linear-gradient(90deg,transparent,${accent.color}44,transparent)` }}
-            animate={{ top:["-2px","102%"] }}
+            animate={inView ? { top:["-2px","102%"] } : { top: "-2px" }}
             transition={{ duration:3.5, repeat:Infinity, ease:"linear", repeatDelay:2.5, delay:i*.5 }} />
         </div>
 
@@ -62,8 +62,9 @@ function ProjectCard({ project, i, inView }: { project: ProjectItem; i: number; 
           transition={{ duration:.6 }}>
           <span className="absolute">{project.icon}</span>
           <motion.div className="absolute inset-0 rounded-2xl"
-            animate={{ boxShadow:[`0 0 0 ${accent.glow.replace("0.25","0")}`,`0 0 20px ${accent.glow}`,`0 0 0 ${accent.glow.replace("0.25","0")}`] }}
-            transition={{ duration:2.5, repeat:Infinity, delay:i*.3 }} />
+            animate={inView ? { opacity: [0.35, 1, 0.35] } : { opacity: 0.5 }}
+            transition={{ duration:2.5, repeat:Infinity, delay:i*.3 }}
+            style={{ boxShadow: `0 0 20px ${accent.glow}` }} />
         </motion.div>
 
         <div className="relative z-10 flex items-start justify-between gap-2">
@@ -102,7 +103,7 @@ function ProjectCard({ project, i, inView }: { project: ProjectItem; i: number; 
             <GithubIcon width={13} height={13} />
             <span>{project.liveUrl && !project.githubUrl ? "View Live" : "View Code"}</span>
           </a>
-          <motion.div animate={{ rotate:[0,360] }} transition={{ duration:9, repeat:Infinity, ease:"linear" }}
+          <motion.div animate={inView ? { rotate:[0,360] } : { rotate: 0 }} transition={{ duration:9, repeat:Infinity, ease:"linear" }}
             style={{ opacity:0.3 }}>
             <svg width="13" height="13" viewBox="0 0 13 13">
               <path d="M6.5 1v11M1 6.5h11M3 3l7 7M10 3l-7 7" stroke={accent.color} strokeWidth="1"/>
@@ -118,14 +119,15 @@ export default function Projects() {
   const projects = useVisibleProjects();
   const { site } = usePortfolio();
   const ref = useRef(null);
-  const inView = useInView(ref, { once:true, margin:"-80px" });
+  const inView = useReadyInView(ref, { once:true, margin:"-80px" });
 
   return (
     <section id="projects" className="relative py-20 px-4 overflow-hidden sm:py-24 sm:px-6 lg:py-28">
       <motion.div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
         style={{ width:"800px", height:"600px",
           background:"radial-gradient(ellipse,rgba(212,154,87,0.12) 0%,rgba(91,52,31,0.12) 48%,transparent 70%)" }}
-        animate={{ scale:[1,1.15,1], rotate:[0,5,0] }} transition={{ duration:10, repeat:Infinity }}
+        animate={inView ? { scale:[1,1.15,1], rotate:[0,5,0] } : { scale: 1, rotate: 0 }}
+        transition={{ duration:10, repeat:Infinity }}
         aria-hidden="true" />
 
       <div className="max-w-6xl mx-auto relative z-10" ref={ref}>

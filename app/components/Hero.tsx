@@ -13,8 +13,8 @@ const stagger: Variants = {
   show: { transition: { staggerChildren: .12, delayChildren: .2 } },
 };
 const up: Variants = {
-  hidden: { opacity: 0, y: 50, filter: "blur(10px)" },
-  show:   { opacity: 1, y: 0,  filter: "blur(0px)",
+  hidden: { opacity: 0, y: 50 },
+  show:   { opacity: 1, y: 0,
     transition: { duration: .9, ease: [.16,1,.3,1] } },
 };
 
