@@ -12,6 +12,9 @@ export default function DeferredEffects() {
 
   useEffect(() => {
     let cancelled = false;
+    let idleId: number | undefined;
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
     void import("./Snowfall");
     void import("./CursorGlow");
 
@@ -19,18 +22,16 @@ export default function DeferredEffects() {
       if (!cancelled) setReady(true);
     };
 
-    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
-      const id = window.requestIdleCallback(mount, { timeout: 2000 });
-      return () => {
-        cancelled = true;
-        window.cancelIdleCallback(id);
-      };
+    if (typeof window.requestIdleCallback === "function") {
+      idleId = window.requestIdleCallback(mount, { timeout: 2000 });
+    } else {
+      timeoutId = setTimeout(mount, 400);
     }
 
-    const t = window.setTimeout(mount, 400);
     return () => {
       cancelled = true;
-      window.clearTimeout(t);
+      if (idleId !== undefined) window.cancelIdleCallback(idleId);
+      if (timeoutId !== undefined) clearTimeout(timeoutId);
     };
   }, []);
 

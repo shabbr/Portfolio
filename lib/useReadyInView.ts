@@ -1,13 +1,7 @@
 "use client";
 
 import type { RefObject } from "react";
-import { useInView } from "framer-motion";
-
-type Options = {
-  once?: boolean;
-  margin?: string;
-  amount?: number | "some" | "all";
-};
+import { useInView, type UseInViewOptions } from "framer-motion";
 
 /**
  * Section entrance trigger. Kept as a shared hook so we can tune
@@ -15,7 +9,7 @@ type Options = {
  */
 export function useReadyInView(
   ref: RefObject<Element | null>,
-  options: Options = { once: true, margin: "-80px" },
+  options: UseInViewOptions = { once: true, margin: "-80px" },
 ): boolean {
   return useInView(ref, options);
 }

@@ -54,11 +54,11 @@ export default function HeroCrystal() {
     }));
 
     let scrolling = false;
-    let scrollTimer = 0;
+    let scrollTimer: ReturnType<typeof setTimeout> | undefined;
     const onScroll = () => {
       scrolling = true;
-      window.clearTimeout(scrollTimer);
-      scrollTimer = window.setTimeout(() => { scrolling = false; }, 140);
+      if (scrollTimer !== undefined) clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => { scrolling = false; }, 140);
     };
     window.addEventListener("scroll", onScroll, { passive: true });
 
@@ -149,7 +149,7 @@ export default function HeroCrystal() {
       window.removeEventListener("resize", resize);
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("scroll", onScroll);
-      window.clearTimeout(scrollTimer);
+      if (scrollTimer !== undefined) clearTimeout(scrollTimer);
       io.disconnect();
     };
   }, []);

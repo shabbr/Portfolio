@@ -17,33 +17,32 @@ export default function DeferredAbout() {
 
   useEffect(() => {
     let cancelled = false;
+    let idleId: number | undefined;
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
     void import("./About");
 
     const mount = () => {
       if (!cancelled) setReady(true);
     };
 
-    // If user scrolls toward About before idle fires, mount immediately
     const onScroll = () => {
       if (window.scrollY > 80) mount();
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
 
-    let idleId: number | undefined;
-    let timeoutId: number | undefined;
-
-    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+    if (typeof window.requestIdleCallback === "function") {
       idleId = window.requestIdleCallback(mount, { timeout: 1200 });
     } else {
-      timeoutId = window.setTimeout(mount, 200);
+      timeoutId = setTimeout(mount, 200);
     }
 
     return () => {
       cancelled = true;
       window.removeEventListener("scroll", onScroll);
       if (idleId !== undefined) window.cancelIdleCallback(idleId);
-      if (timeoutId !== undefined) window.clearTimeout(timeoutId);
+      if (timeoutId !== undefined) clearTimeout(timeoutId);
     };
   }, []);
 

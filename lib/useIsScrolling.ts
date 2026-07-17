@@ -7,16 +7,16 @@ export function useIsScrolling(idleMs = 140): boolean {
   const [scrolling, setScrolling] = useState(false);
 
   useEffect(() => {
-    let timer = 0;
+    let timer: ReturnType<typeof setTimeout> | undefined;
     const onScroll = () => {
       setScrolling(true);
-      window.clearTimeout(timer);
-      timer = window.setTimeout(() => setScrolling(false), idleMs);
+      if (timer !== undefined) clearTimeout(timer);
+      timer = setTimeout(() => setScrolling(false), idleMs);
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", onScroll);
-      window.clearTimeout(timer);
+      if (timer !== undefined) clearTimeout(timer);
     };
   }, [idleMs]);
 

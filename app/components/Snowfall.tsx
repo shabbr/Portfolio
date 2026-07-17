@@ -85,11 +85,11 @@ export default function Snowfall() {
     });
 
     let scrolling = false;
-    let scrollTimer = 0;
+    let scrollTimer: ReturnType<typeof setTimeout> | undefined;
     const onScroll = () => {
       scrolling = true;
-      window.clearTimeout(scrollTimer);
-      scrollTimer = window.setTimeout(() => { scrolling = false; }, 140);
+      if (scrollTimer !== undefined) clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => { scrolling = false; }, 140);
     };
     window.addEventListener("scroll", onScroll, { passive: true });
 
@@ -138,7 +138,7 @@ export default function Snowfall() {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
       window.removeEventListener("scroll", onScroll);
-      window.clearTimeout(scrollTimer);
+      if (scrollTimer !== undefined) clearTimeout(scrollTimer);
     };
   }, []);
 
