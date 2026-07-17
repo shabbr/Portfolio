@@ -100,7 +100,9 @@ export async function PUT(req: NextRequest) {
         hasCustomPassword: Boolean(next.auth.passwordHash),
       },
     });
-  } catch {
-    return NextResponse.json({ error: "Failed to save email settings." }, { status: 500 });
+  } catch (err) {
+    const message =
+      err instanceof Error ? err.message : "Failed to save email settings.";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

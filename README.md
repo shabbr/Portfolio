@@ -24,6 +24,15 @@ Copy `.env.example` to `.env.local` and set:
 - `RESEND_API_KEY` (for contact form emails)
 - `NEXT_PUBLIC_SITE_URL` — **your live site URL** (required for SEO canonical, sitemap, OG, password-reset links)
 
+### Vercel admin saves (important)
+
+Vercel’s filesystem is **read-only**, so Admin → Save cannot write `data/portfolio.json` in production.
+
+1. In your Vercel project → **Storage** → create a **Blob** store  
+2. Connect it to the project (this sets `BLOB_READ_WRITE_TOKEN`)  
+3. **Redeploy**  
+4. Save again from `/admin` — content is stored in Blob and shown on the live site
+
 ## SEO (on-page — built in)
 
 - Semantic metadata (title template, description, keywords)

@@ -1,5 +1,12 @@
 import { promises as fs } from "fs";
 import path from "path";
+import {
+  isBlobConfigured,
+  isVercelRuntime,
+  readJsonBlob,
+  storageWriteHint,
+  writeJsonBlob,
+} from "./blob-store";
 
 export type EmailSettings = {
   resendApiKey: string;
@@ -22,6 +29,7 @@ export type AppSettings = {
 };
 
 const SETTINGS_PATH = path.join(process.cwd(), "data", "settings.json");
+const BLOB_PATH = "cms/settings.json";
 
 function defaultsFromEnv(): AppSettings {
   return {
@@ -56,21 +64,51 @@ function mergeSettings(raw: Partial<AppSettings> | null | undefined): AppSetting
   };
 }
 
-export async function readSettings(): Promise<AppSettings> {
+async function readSettingsFromDisk(): Promise<AppSettings | null> {
   try {
     const raw = await fs.readFile(SETTINGS_PATH, "utf8");
     return mergeSettings(JSON.parse(raw) as Partial<AppSettings>);
   } catch (err) {
     const code = (err as NodeJS.ErrnoException)?.code;
-    if (code === "ENOENT") return defaultsFromEnv();
+    if (code === "ENOENT") return null;
     throw err;
   }
 }
 
+export async function readSettings(): Promise<AppSettings> {
+  if (isBlobConfigured()) {
+    const remote = await readJsonBlob<Partial<AppSettings>>(BLOB_PATH);
+    if (remote) return mergeSettings(remote);
+
+    const disk = await readSettingsFromDisk();
+    const seeded = disk ?? defaultsFromEnv();
+    try {
+      await writeJsonBlob(BLOB_PATH, seeded);
+    } catch {
+      // ignore seed failures; env defaults still apply
+    }
+    return seeded;
+  }
+
+  return (await readSettingsFromDisk()) ?? defaultsFromEnv();
+}
+
 export async function writeSettings(settings: AppSettings): Promise<void> {
-  const dir = path.dirname(SETTINGS_PATH);
-  await fs.mkdir(dir, { recursive: true });
-  await fs.writeFile(SETTINGS_PATH, JSON.stringify(settings, null, 2) + "\n", "utf8");
+  if (isBlobConfigured()) {
+    await writeJsonBlob(BLOB_PATH, settings);
+    return;
+  }
+
+  try {
+    const dir = path.dirname(SETTINGS_PATH);
+    await fs.mkdir(dir, { recursive: true });
+    await fs.writeFile(SETTINGS_PATH, JSON.stringify(settings, null, 2) + "\n", "utf8");
+  } catch (err) {
+    if (isVercelRuntime()) {
+      throw new Error(storageWriteHint(err));
+    }
+    throw new Error(storageWriteHint(err));
+  }
 }
 
 export async function updateSettings(
