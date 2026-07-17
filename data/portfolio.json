@@ -1,0 +1,423 @@
+{
+  "site": {
+    "firstName": "Shabbar",
+    "lastName": "Abbas",
+    "fullName": "Shabbar Abbas",
+    "initials": "SA",
+    "title": "Full-Stack Engineer & Laravel Specialist",
+    "tagline": "Building scalable web apps, APIs, and products with Laravel, Nuxt, and Python. Founder of IconMarvel.",
+    "location": "Lahore, Pakistan",
+    "email": "ashabbar439@gmail.com",
+    "phone": "+92 327 7798112",
+    "linkedin": "https://www.linkedin.com/in/shabbar-abbas-669689214",
+    "linkedinHandle": "shabbar-abbas-669689214",
+    "github": "https://github.com/shabbr",
+    "githubHandle": "shabbr",
+    "website": "https://iconmarvel.com",
+    "yearsExp": "3+"
+  },
+  "navLinks": [
+    {
+      "id": "nav-home",
+      "label": "Home",
+      "href": "#home",
+      "order": 0
+    },
+    {
+      "id": "nav-about",
+      "label": "About",
+      "href": "#about",
+      "order": 1
+    },
+    {
+      "id": "nav-experience",
+      "label": "Experience",
+      "href": "#experience",
+      "order": 2
+    },
+    {
+      "id": "nav-projects",
+      "label": "Projects",
+      "href": "#projects",
+      "order": 3
+    },
+    {
+      "id": "nav-skills",
+      "label": "Skills",
+      "href": "#skills",
+      "order": 4
+    },
+    {
+      "id": "nav-contact",
+      "label": "Contact",
+      "href": "#contact",
+      "order": 5
+    }
+  ],
+  "about": {
+    "paragraphs": [
+      "I'm a Full-Stack Software Engineer based in Lahore, Pakistan, with 3+ years building scalable web applications, APIs, and backend systems. I specialize in Laravel, Nuxt.js, and Python-based services.",
+      "I've delivered production apps across POS, e-commerce, cab booking, trading, interpreting platforms, AI chatbots, and CMS — with a strong focus on system design, database architecture, and performance.",
+      "I'm also the founder of IconMarvel — a designer-first and developer-first icon platform combining AI search, SVG tools, APIs, Figma Plugin, NPM Package and CDN delivery."
+    ],
+    "stats": [
+      {
+        "id": "stat-1",
+        "val": "3+",
+        "label": "Years Exp.",
+        "order": 0
+      },
+      {
+        "id": "stat-2",
+        "val": "8+",
+        "label": "Systems Built",
+        "order": 1
+      },
+      {
+        "id": "stat-3",
+        "val": "10+",
+        "label": "Projects",
+        "order": 2
+      }
+    ],
+    "tags": [
+      "Laravel",
+      "Nuxt.js",
+      "Python",
+      "Docker",
+      "Cloudflare"
+    ],
+    "highlights": [
+      {
+        "id": "hl-1",
+        "title": "Full-Stack Focus",
+        "desc": "Laravel, Nuxt.js & Python with 3+ years shipping production systems.",
+        "icon": "Server",
+        "order": 0
+      },
+      {
+        "id": "hl-2",
+        "title": "API Architect",
+        "desc": "RESTful APIs for SAAS, POS, Trading and Cab booking platforms.",
+        "icon": "Code2",
+        "order": 1
+      },
+      {
+        "id": "hl-3",
+        "title": "System Design",
+        "desc": "PostgreSQL & MySQL architecture, performance, and data integrity.",
+        "icon": "Database",
+        "order": 2
+      },
+      {
+        "id": "hl-4",
+        "title": "Product Builder",
+        "desc": "Founder of IconMarvel — APIs, CDN, Docker & Cloudflare deployments.",
+        "icon": "GitBranch",
+        "order": 3
+      }
+    ]
+  },
+  "experience": [
+    {
+      "id": "exp-1",
+      "role": "Web Developer",
+      "company": "Mashkraft",
+      "location": "Lahore, Pakistan",
+      "period": "Nov 2025 - Present",
+      "current": true,
+      "points": [
+        "Building and shipping full-stack web applications with Laravel, Nuxt.js, and modern deployment workflows.",
+        "Designing scalable APIs, database architecture, and performance-focused backend systems.",
+        "Working across the stack — from clean UI delivery to Dockerized deployments on VPS and Cloudflare."
+      ],
+      "order": 0,
+      "visible": true
+    },
+    {
+      "id": "exp-2",
+      "role": "PHP Laravel Developer",
+      "company": "Allomate Solutions",
+      "location": "Lahore, Pakistan",
+      "period": "May 2024 - Nov 2025",
+      "current": false,
+      "points": [
+        "Delivered production Laravel applications across POS, e-commerce, trading, and service platforms.",
+        "Built REST APIs, admin dashboards, and complex business logic with clean backend architecture.",
+        "Collaborated on features involving payments, reporting, inventory, and real-time user workflows."
+      ],
+      "order": 1,
+      "visible": true
+    },
+    {
+      "id": "exp-3",
+      "role": "PHP Laravel Developer",
+      "company": "Spark Solutionz",
+      "location": "Sargodha, Pakistan",
+      "period": "Feb 2023 - Mar 2024",
+      "current": false,
+      "points": [
+        "Developed Laravel-based systems for booking, CMS, chat, and operational business domains.",
+        "Implemented dynamic frontends with JavaScript and jQuery alongside robust PHP backends.",
+        "Improved maintainability through structured modules, SQL optimization, and clean coding practices."
+      ],
+      "order": 2,
+      "visible": true
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj-1",
+      "title": "IconMarvel",
+      "description": "Founder of a designer-first and developer-first icon platform: AI-powered search, SVG customization, CDN/NPM delivery, developer APIs, Figma plugin, and production-ready code export — unifying the full Search → Customize → Export → Integrate → Ship workflow.",
+      "tech": [
+        "Laravel",
+        "Nuxt.js",
+        "APIs",
+        "CDN",
+        "AI Search"
+      ],
+      "icon": "IM",
+      "featured": true,
+      "liveUrl": "https://iconmarvel.com",
+      "githubUrl": "",
+      "order": 0,
+      "visible": true
+    },
+    {
+      "id": "proj-2",
+      "title": "Financial Statement Generator",
+      "description": "Tool that automatically generates SECP-compliant financial documents — Balance Sheet, Profit & Loss, Cash Flow, Equity Statement, and Notes — required for company registration in Pakistan.",
+      "tech": [
+        "PHP",
+        "Laravel",
+        "JavaScript",
+        "jQuery",
+        "Bootstrap"
+      ],
+      "icon": "FS",
+      "featured": false,
+      "liveUrl": "",
+      "githubUrl": "",
+      "order": 1,
+      "visible": true
+    },
+    {
+      "id": "proj-4",
+      "title": "ACT Ride Booking",
+      "description": "Ride-booking platform (inDriver-style) where admins/dispatchers create tasks for customers, drivers accept bookings, and a calendar shows driver availability and schedules.",
+      "tech": [
+        "Laravel",
+        "JavaScript",
+        "jQuery",
+        "Bootstrap"
+      ],
+      "icon": "AC",
+      "featured": false,
+      "liveUrl": "",
+      "githubUrl": "",
+      "order": 2,
+      "visible": true
+    },
+    {
+      "id": "proj-5",
+      "title": "Prime Production",
+      "description": "Interpreting-service platform for booking interpreters and managing translation jobs, with dashboards for clients, vendors, and admins covering quotations and accounts.",
+      "tech": [
+        "Laravel",
+        "JavaScript",
+        "jQuery",
+        "Bootstrap"
+      ],
+      "icon": "PP",
+      "featured": false,
+      "liveUrl": "",
+      "githubUrl": "",
+      "order": 3,
+      "visible": true
+    },
+    {
+      "id": "proj-6",
+      "title": "Vegetable Market POS",
+      "description": "Point-of-sale system for a vegetable market, handling complex sales, purchases, and money-management workflows.",
+      "tech": [
+        "PHP",
+        "Laravel",
+        "Bootstrap",
+        "JavaScript",
+        "jQuery"
+      ],
+      "icon": "POS",
+      "featured": false,
+      "liveUrl": "",
+      "githubUrl": "https://github.com/shabbr/Advance-Sabzi-Mandi-POS",
+      "order": 4,
+      "visible": true
+    },
+    {
+      "id": "proj-7",
+      "title": "Trading Web Platform",
+      "description": "Trading features including profit/loss calculations, leverage handling, market data integration, and dashboards focused on core financial logic and UX.",
+      "tech": [
+        "PHP",
+        "Laravel",
+        "JavaScript",
+        "jQuery",
+        "APIs"
+      ],
+      "icon": "TR",
+      "featured": false,
+      "liveUrl": "",
+      "githubUrl": "",
+      "order": 5,
+      "visible": true
+    },
+    {
+      "id": "proj-8",
+      "title": "E-commerce Platform",
+      "description": "E-commerce system with sales, purchases, inventory management, and customer support modules built on Laravel.",
+      "tech": [
+        "PHP",
+        "Laravel",
+        "JavaScript",
+        "jQuery",
+        "Bootstrap"
+      ],
+      "icon": "EC",
+      "featured": false,
+      "liveUrl": "",
+      "githubUrl": "https://github.com/shabbr/E-Commerce",
+      "order": 6,
+      "visible": true
+    },
+    {
+      "id": "proj-3",
+      "title": "Custom AI Chatbot",
+      "description": "OpenAI-powered chatbot that handles payment queries and integrates third-party payment APIs for real-time customer information.",
+      "tech": [
+        "PHP",
+        "Laravel",
+        "OpenAI API",
+        "Bootstrap",
+        "JavaScript"
+      ],
+      "icon": "AI",
+      "featured": false,
+      "liveUrl": "",
+      "githubUrl": "",
+      "order": 7,
+      "visible": true
+    }
+  ],
+  "skillCategories": [
+    {
+      "id": "sk-backend",
+      "name": "Backend",
+      "items": [
+        "PHP",
+        "Laravel",
+        "Python",
+        "REST APIs",
+        "System Design"
+      ],
+      "order": 0
+    },
+    {
+      "id": "sk-frontend",
+      "name": "Frontend",
+      "items": [
+        "Nuxt.js",
+        "Next.js",
+        "JavaScript",
+        "jQuery",
+        "Livewire",
+        "Bootstrap"
+      ],
+      "order": 1
+    },
+    {
+      "id": "sk-database",
+      "name": "Database",
+      "items": [
+        "MySQL",
+        "PostgreSQL",
+        "SQL"
+      ],
+      "order": 2
+    },
+    {
+      "id": "sk-tools",
+      "name": "Tools",
+      "items": [
+        "Docker",
+        "Cloudflare",
+        "VPS Deployment",
+        "GIT",
+        "Prompt Engineering"
+      ],
+      "order": 3
+    }
+  ],
+  "skillLevels": [
+    {
+      "id": "sl-1",
+      "name": "Laravel / PHP",
+      "level": 95,
+      "order": 0
+    },
+    {
+      "id": "sl-2",
+      "name": "REST API Design",
+      "level": 90,
+      "order": 1
+    },
+    {
+      "id": "sl-3",
+      "name": "MySQL / PostgreSQL",
+      "level": 88,
+      "order": 2
+    },
+    {
+      "id": "sl-4",
+      "name": "Nuxt.js / Next.js",
+      "level": 82,
+      "order": 3
+    },
+    {
+      "id": "sl-5",
+      "name": "JavaScript / jQuery",
+      "level": 85,
+      "order": 4
+    },
+    {
+      "id": "sl-6",
+      "name": "Docker / Cloudflare",
+      "level": 80,
+      "order": 5
+    },
+    {
+      "id": "sl-7",
+      "name": "Python",
+      "level": 75,
+      "order": 6
+    },
+    {
+      "id": "sl-8",
+      "name": "System Design",
+      "level": 85,
+      "order": 7
+    },
+    {
+      "id": "sl-9",
+      "name": "Git / Deployment",
+      "level": 88,
+      "order": 8
+    },
+    {
+      "id": "sl-mrnwfltx-prj55",
+      "name": "New skill",
+      "level": 70,
+      "order": 9
+    }
+  ]
+}

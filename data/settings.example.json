@@ -1,0 +1,13 @@
+{
+  "email": {
+    "resendApiKey": "",
+    "fromEmail": "onboarding@resend.dev",
+    "toEmail": "ashabbar439@gmail.com"
+  },
+  "auth": {
+    "passwordHash": null,
+    "recoveryEmail": "ashabbar439@gmail.com",
+    "resetTokenHash": null,
+    "resetTokenExpires": null
+  }
+}
