@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Mail, Phone, Shield } from "lucide-react";
 import GithubIcon from "./icons/GithubIcon";
 import LinkedinIcon from "./icons/LinkedinIcon";
-import { WhatsAppGlyph } from "./WhatsAppFloat";
+import WhatsAppIcon from "./icons/WhatsAppIcon";
 import { formatDisplayPhone, telHref, whatsAppChatUrl } from "@/lib/phone";
 import { usePortfolio } from "./PortfolioProvider";
 
@@ -50,7 +50,7 @@ export default function Footer() {
             { href:site.github,            icon:<GithubIcon width={16} height={16} />,   label:"GitHub",   color:"#e6bd82" },
             { href:site.linkedin,          icon:<LinkedinIcon width={16} height={16} />, label:"LinkedIn", color:"#d49a57" },
             { href:`mailto:${site.email}`, icon:<Mail size={16} />,                      label:"Email",    color:"#c47d45" },
-            { href:whatsAppChatUrl(site.phone), icon:<WhatsAppGlyph size={16} />,        label:"WhatsApp", color:"#25d366" },
+            { href:whatsAppChatUrl(site.phone), icon:<WhatsAppIcon size={16} />,         label:"WhatsApp", color:"#e6bd82" },
           ].map(({ href, icon, label, color }) => (
             <motion.a key={label} href={href}
               target={href.startsWith("mailto") || href.startsWith("tel:") ? undefined : "_blank"}

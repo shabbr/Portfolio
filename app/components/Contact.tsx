@@ -5,7 +5,7 @@ import { useRef, useState } from "react";
 import { AlertCircle, CheckCircle, Mail, MapPin, MessageSquareText, Phone, Send, TerminalSquare } from "lucide-react";
 import GithubIcon from "./icons/GithubIcon";
 import LinkedinIcon from "./icons/LinkedinIcon";
-import { WhatsAppGlyph } from "./WhatsAppFloat";
+import WhatsAppIcon from "./icons/WhatsAppIcon";
 import { useReadyInView } from "@/lib/useReadyInView";
 import { formatDisplayPhone, telHref, whatsAppChatUrl } from "@/lib/phone";
 import { usePortfolio } from "./PortfolioProvider";
@@ -54,7 +54,7 @@ export default function Contact() {
   const CONTACTS = [
     { icon:<Mail size={17} />,                      label:"Email",    value:site.email,              href:`mailto:${site.email}`, color:"#d49a57" },
     { icon:<Phone size={17} />,                     label:"Phone",    value:phoneDisplay,            href:telHref(site.phone),   color:"#e6bd82" },
-    { icon:<WhatsAppGlyph size={17} />,             label:"WhatsApp", value:phoneDisplay,            href:whatsAppChatUrl(site.phone), color:"#25d366" },
+    { icon:<WhatsAppIcon size={17} />,              label:"WhatsApp", value:phoneDisplay,            href:whatsAppChatUrl(site.phone), color:"#d49a57" },
     { icon:<MapPin size={17} />,                    label:"Location", value:site.location,           href:null,                  color:"#c47d45" },
     { icon:<GithubIcon width={17} height={17} />,   label:"GitHub",   value:`github.com/${site.githubHandle}`, href:site.github, color:"#a96f45" },
     { icon:<LinkedinIcon width={17} height={17} />, label:"LinkedIn", value:site.linkedinHandle,     href:site.linkedin,         color:"#d49a57" },
