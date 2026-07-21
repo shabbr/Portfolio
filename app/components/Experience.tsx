@@ -8,7 +8,7 @@ import { useReadyInView } from "@/lib/useReadyInView";
 import { useVisibleExperience } from "./PortfolioProvider";
 import type { ExperienceItem } from "@/lib/portfolio-types";
 
-const CARD_COLORS = ["#e6bd82", "#d49a57", "#c47d45"];
+const CARD_COLORS = ["var(--accent-2)", "var(--accent)", "var(--accent-3)"];
 
 function ExpCard({ exp, i, inView }: { exp: ExperienceItem; i: number; inView: boolean }) {
   const { ref, onMove, onLeave } = useTilt(6);
@@ -25,7 +25,7 @@ function ExpCard({ exp, i, inView }: { exp: ExperienceItem; i: number; inView: b
       <motion.div
         className="absolute left-4 top-7 w-5 h-5 rounded-full border-2 -translate-x-1/2 z-10 flex items-center justify-center"
         style={{
-          background: exp.current ? accent : "rgba(24,14,10,0.92)",
+          background: exp.current ? accent : "rgba(var(--card-to-rgb),0.92)",
           borderColor: accent,
         }}
         animate={exp.current && inView ? {
@@ -34,7 +34,7 @@ function ExpCard({ exp, i, inView }: { exp: ExperienceItem; i: number; inView: b
         transition={{ duration:2, repeat:Infinity }}>
         {exp.current && (
           <motion.div className="w-2 h-2 rounded-full"
-            style={{ background:"#1d1009" }}
+            style={{ background:"var(--ink)" }}
             animate={inView ? { scale:[1,0.5,1] } : { scale: 1 }}
             transition={{ duration:1.5, repeat:Infinity }} />
         )}
@@ -48,9 +48,9 @@ function ExpCard({ exp, i, inView }: { exp: ExperienceItem; i: number; inView: b
         className="p-5 sm:p-6 relative overflow-hidden rounded-[1.2rem]"
         style={{
           transition:"transform .25s cubic-bezier(.4,0,.2,1)",
-          background:"linear-gradient(145deg,rgba(70,43,27,.88),rgba(24,14,10,.84))",
-          border:"1px solid rgba(230,189,130,.14)",
-          boxShadow:"0 20px 60px rgba(20,9,4,.34), inset 0 1px 0 rgba(255,225,180,.07)",
+          background:"linear-gradient(145deg,rgba(var(--card-from-rgb),.88),rgba(var(--card-to-rgb),.84))",
+          border:"1px solid rgba(var(--accent-2-rgb),.14)",
+          boxShadow:"0 20px 60px rgba(var(--shadow-rgb),.34), inset 0 1px 0 rgba(var(--accent-2-rgb),.07)",
         }}>
 
         {/* Top accent bar */}
@@ -70,7 +70,7 @@ function ExpCard({ exp, i, inView }: { exp: ExperienceItem; i: number; inView: b
                 style={{ background:`${accent}18`, border:`1px solid ${accent}33` }}>
                 <Briefcase size={12} style={{ color:accent }} />
               </div>
-              <h3 className="font-bold text-base" style={{ color:"#fff2df" }}>{exp.role}</h3>
+              <h3 className="font-bold text-base" style={{ color:"var(--fg)" }}>{exp.role}</h3>
             </div>
             <motion.p className="font-semibold text-sm mb-1"
               style={{ color:accent }}
@@ -78,12 +78,12 @@ function ExpCard({ exp, i, inView }: { exp: ExperienceItem; i: number; inView: b
               transition={{ duration:3, repeat:Infinity, delay:i*.5 }}>
               {exp.company}
             </motion.p>
-            <div className="flex items-center gap-1 text-xs" style={{ color:"rgba(215,185,144,0.62)" }}>
+            <div className="flex items-center gap-1 text-xs" style={{ color:"rgba(var(--muted-rgb),0.62)" }}>
               <MapPin size={10} /><span>{exp.location}</span>
             </div>
           </div>
           <div className="flex flex-col items-end gap-2">
-            <div className="flex items-center gap-1 text-xs" style={{ color:"rgba(239,222,201,0.68)" }}>
+            <div className="flex items-center gap-1 text-xs" style={{ color:"rgba(var(--fg-rgb),0.68)" }}>
               <Calendar size={10} />
               <span>{exp.period}</span>
             </div>
@@ -105,7 +105,7 @@ function ExpCard({ exp, i, inView }: { exp: ExperienceItem; i: number; inView: b
               initial={{ opacity:0, x:-12 }} animate={inView?{opacity:1,x:0}:{}}
               transition={{ delay:.45+i*.2+j*.07 }}
               className="flex items-start gap-2.5 text-sm"
-              style={{ color:"rgba(239,222,201,0.76)" }}>
+              style={{ color:"rgba(var(--fg-rgb),0.76)" }}>
               <motion.span className="mt-1.5 shrink-0 text-[8px]"
                 style={{ color:accent }}
                 animate={inView ? { opacity:[.5,1,.5] } : { opacity: .7 }}
@@ -131,7 +131,7 @@ export default function Experience() {
       {/* Vertical light columns */}
       {[12,30,50,70,88].map((l, i) => (
         <motion.div key={i} className="absolute top-0 bottom-0 w-px pointer-events-none"
-          style={{ left:`${l}%`, background:"linear-gradient(180deg,transparent,rgba(230,189,130,.055),transparent)" }}
+          style={{ left:`${l}%`, background:"linear-gradient(180deg,transparent,rgba(var(--accent-2-rgb),.055),transparent)" }}
           animate={inView ? { opacity:[.2,.8,.2] } : { opacity: .35 }}
           transition={{ duration:3+i, repeat:Infinity, delay:i*.4 }}
           aria-hidden="true" />
@@ -141,11 +141,11 @@ export default function Experience() {
         <motion.div initial={{ opacity:0, y:28 }} animate={inView?{opacity:1,y:0}:{}}
           transition={{ duration:.7 }} className="text-center mb-10 sm:mb-14">
           <span className="inline-flex rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[.24em]"
-            style={{ color:"#e6bd82", background:"rgba(92,56,35,.36)", border:"1px solid rgba(230,189,130,.22)" }}>
+            style={{ color:"var(--accent-2)", background:"rgba(var(--tint-rgb),.36)", border:"1px solid rgba(var(--accent-2-rgb),.22)" }}>
             Career Path
           </span>
-          <h2 className="text-3xl sm:text-5xl font-bold mt-3 leading-tight" style={{ color:"#fff2df" }}>
-            Work <span style={{ color:"#d49a57" }}>Experience</span>
+          <h2 className="text-3xl sm:text-5xl font-bold mt-3 leading-tight" style={{ color:"var(--fg)" }}>
+            Work <span style={{ color:"var(--accent)" }}>Experience</span>
           </h2>
           <motion.div className="ice-divider mt-4 mx-auto" style={{ width:0 }}
             animate={inView?{width:"120px"}:{}} transition={{ duration:.8, delay:.3 }} />
@@ -154,7 +154,7 @@ export default function Experience() {
         <div className="relative">
           {/* Spine */}
           <motion.div className="absolute left-6 top-0 w-px"
-            style={{ background:"linear-gradient(180deg,#e6bd82,rgba(212,154,87,.55),rgba(139,90,60,.35),transparent)" }}
+            style={{ background:"linear-gradient(180deg,var(--accent-2),rgba(var(--accent-rgb),.55),rgba(var(--accent-4-rgb),.35),transparent)" }}
             initial={{ height:0 }} animate={inView?{height:"100%"}:{}}
             transition={{ duration:1.5, delay:.3 }} />
 

@@ -1,12 +1,19 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { readThemeColors, rgba, type ThemeColors } from "@/lib/theme-colors";
+import { THEME_CHANGE_EVENT } from "./ThemeProvider";
 
 interface P {
   x: number; y: number; z: number;
   vx: number; vy: number; vz: number;
   size: number; opacity: number;
-  hue: number; phase: number;
+  tone: 0 | 1 | 2 | 3;
+  phase: number;
+}
+
+function toneRgb(colors: ThemeColors, tone: number): string {
+  return [colors.accentRgb, colors.accent2Rgb, colors.accent3Rgb, colors.accent4Rgb][tone % 4];
 }
 
 export default function HeroCrystal() {
@@ -25,6 +32,10 @@ export default function HeroCrystal() {
     let W = 0, H = 0, mx = 0.5, my = 0.5;
     let inView = true;
     let running = true;
+    let colors = readThemeColors();
+
+    const onTheme = () => { colors = readThemeColors(); };
+    window.addEventListener(THEME_CHANGE_EVENT, onTheme);
 
     const resize = () => {
       W = canvas.width  = canvas.offsetWidth;
@@ -52,7 +63,7 @@ export default function HeroCrystal() {
       vx: (Math.random() - .5) * .0003, vy: (Math.random() - .5) * .0003, vz: (Math.random() - .5) * .0005,
       size: Math.random() * 3.5 + .8,
       opacity: Math.random() * .55 + .2,
-      hue: [31, 25, 38, 18][Math.floor(Math.random() * 4)],
+      tone: (Math.floor(Math.random() * 4) as 0 | 1 | 2 | 3),
       phase: Math.random() * Math.PI * 2,
     }));
 
@@ -90,7 +101,6 @@ export default function HeroCrystal() {
         };
       });
 
-      // Connections — spatial early-out keeps look, cuts O(n²) cost
       const linkDist = 130;
       const linkDistSq = linkDist * linkDist;
       for (let i = 0; i < proj.length; i++) {
@@ -101,10 +111,9 @@ export default function HeroCrystal() {
           if (dSq >= linkDistSq) continue;
           const d = Math.sqrt(dSq);
           const alpha = (1 - d / linkDist) * .15 * Math.min(a.persp, b.persp);
-          const mid = (a.p.hue + b.p.hue) / 2;
           ctx.beginPath();
           ctx.moveTo(a.sx, a.sy); ctx.lineTo(b.sx, b.sy);
-          ctx.strokeStyle = `hsla(${mid},100%,70%,${alpha})`;
+          ctx.strokeStyle = rgba(toneRgb(colors, a.p.tone), alpha);
           ctx.lineWidth = .5; ctx.stroke();
         }
       }
@@ -112,16 +121,17 @@ export default function HeroCrystal() {
       for (const { sx, sy, ss, p } of proj) {
         const pulse = .82 + Math.sin(t * .0009 + p.phase) * .18;
         const a = p.opacity * pulse;
+        const rgb = toneRgb(colors, p.tone);
 
         const g = ctx.createRadialGradient(sx, sy, 0, sx, sy, ss * 5);
-        g.addColorStop(0, `hsla(${p.hue},100%,72%,${a * .45})`);
-        g.addColorStop(.5, `hsla(${p.hue},100%,60%,${a * .12})`);
+        g.addColorStop(0, rgba(rgb, a * .45));
+        g.addColorStop(.5, rgba(rgb, a * .12));
         g.addColorStop(1, "transparent");
         ctx.beginPath(); ctx.arc(sx, sy, ss * 5, 0, Math.PI * 2);
         ctx.fillStyle = g; ctx.fill();
 
         ctx.beginPath(); ctx.arc(sx, sy, ss, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(${p.hue},100%,82%,${a})`;
+        ctx.fillStyle = rgba(rgb, a);
         ctx.fill();
 
         if (ss > 2.8) {
@@ -131,12 +141,12 @@ export default function HeroCrystal() {
           ctx.moveTo(0, -ss * 2.4); ctx.lineTo(ss * 1.4, 0);
           ctx.lineTo(0, ss * 2.4);  ctx.lineTo(-ss * 1.4, 0);
           ctx.closePath();
-          ctx.strokeStyle = `hsla(${p.hue},100%,78%,${a * .55})`;
+          ctx.strokeStyle = rgba(rgb, a * .55);
           ctx.lineWidth = .8; ctx.stroke();
           ctx.beginPath();
           ctx.moveTo(-ss * .8, 0); ctx.lineTo(ss * .8, 0);
           ctx.moveTo(0, -ss * .8); ctx.lineTo(0, ss * .8);
-          ctx.strokeStyle = `hsla(${p.hue},100%,90%,${a * .3})`;
+          ctx.strokeStyle = rgba(rgb, a * .3);
           ctx.lineWidth = .4; ctx.stroke();
           ctx.restore();
         }
@@ -152,6 +162,7 @@ export default function HeroCrystal() {
       window.removeEventListener("resize", resize);
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener(THEME_CHANGE_EVENT, onTheme);
       if (scrollTimer !== undefined) clearTimeout(scrollTimer);
       io.disconnect();
     };

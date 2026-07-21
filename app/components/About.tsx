@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Float } from "@react-three/drei";
@@ -12,6 +12,8 @@ import AboutBackground from "./AboutBackground";
 import { usePortfolio } from "./PortfolioProvider";
 import { sortByOrder } from "@/lib/portfolio-types";
 import { usePageVisible } from "@/lib/usePageVisible";
+import { readThemeColors, type ThemeColors } from "@/lib/theme-colors";
+import { THEME_CHANGE_EVENT } from "./ThemeProvider";
 
 const ICON_MAP = {
   Server,
@@ -21,31 +23,39 @@ const ICON_MAP = {
 } as const;
 
 const HIGHLIGHT_COLORS = [
-  { color:"#d49a57", bg:"rgba(212,154,87,0.14)" },
-  { color:"#c47d45", bg:"rgba(196,125,69,0.14)" },
-  { color:"#a96f45", bg:"rgba(169,111,69,0.14)" },
-  { color:"#e6bd82", bg:"rgba(230,189,130,0.14)" },
+  { color: "var(--accent)", bg: "rgba(var(--accent-rgb),0.14)" },
+  { color: "var(--accent-3)", bg: "rgba(var(--accent-3-rgb),0.14)" },
+  { color: "var(--accent-4)", bg: "rgba(var(--accent-4-rgb),0.14)" },
+  { color: "var(--accent-2)", bg: "rgba(var(--accent-2-rgb),0.14)" },
 ];
 
-const particleColors = ["#d49a57", "#c47d45", "#8b5a3c", "#e6bd82"];
-const particles = Array.from({ length: 26 }, (_, i) => {
+const particleLayout = Array.from({ length: 26 }, (_, i) => {
   const waveA = Math.sin(i * 1.91);
   const waveB = Math.cos(i * 2.37);
   const waveC = Math.sin(i * 3.29 + 0.7);
-
   return {
-    position: [
-      waveA * 2.9,
-      waveB * 1.9,
-      waveC * 1.2,
-    ] as [number, number, number],
+    position: [waveA * 2.9, waveB * 1.9, waveC * 1.2] as [number, number, number],
     scale: 0.04 + (i % 5) * 0.012,
-    color: particleColors[i % particleColors.length],
+    tone: i % 4,
   };
 });
 
+function useLiveThemeColors(): ThemeColors {
+  const [colors, setColors] = useState(() => readThemeColors());
+  useEffect(() => {
+    const sync = () => setColors(readThemeColors());
+    sync();
+    window.addEventListener(THEME_CHANGE_EVENT, sync);
+    return () => window.removeEventListener(THEME_CHANGE_EVENT, sync);
+  }, []);
+  return colors;
+}
+
 function AboutScene({ active }: { active: boolean }) {
   const group = useRef<Group>(null);
+  const c = useLiveThemeColors();
+  const lineColors = [c.accent2, c.accent3, c.accent, c.accent4];
+  const particleTones = [c.accent, c.accent3, c.accent4, c.accent2];
 
   useFrame(({ clock, pointer }) => {
     if (!active || !group.current) return;
@@ -56,31 +66,31 @@ function AboutScene({ active }: { active: boolean }) {
   return (
     <>
       <ambientLight intensity={1.4} />
-      <directionalLight position={[3, 4, 5]} intensity={2.3} color="#ffe1b0" />
-      <pointLight position={[-4, -2, 3]} intensity={2.1} color="#c47d45" />
+      <directionalLight position={[3, 4, 5]} intensity={2.3} color={c.fg} />
+      <pointLight position={[-4, -2, 3]} intensity={2.1} color={c.accent3} />
       <group ref={group}>
         <Float speed={1.3} rotationIntensity={0.35} floatIntensity={0.7}>
           <mesh position={[0, -0.95, 0]} rotation={[0.18, 0, 0]}>
             <boxGeometry args={[2.25, 0.12, 1.25]} />
-            <meshStandardMaterial color="#5b3725" metalness={0.28} roughness={0.45} />
+            <meshStandardMaterial color={c.accent4} metalness={0.28} roughness={0.45} />
           </mesh>
           <mesh position={[0, -0.25, -0.35]} rotation={[-0.12, 0, 0]}>
             <boxGeometry args={[2.05, 1.25, 0.08]} />
-            <meshStandardMaterial color="#2b1a14" metalness={0.18} roughness={0.35} emissive="#160b06" emissiveIntensity={0.5} />
+            <meshStandardMaterial color={c.bgElevated} metalness={0.18} roughness={0.35} emissive={c.bg} emissiveIntensity={0.5} />
           </mesh>
           <mesh position={[0, -0.25, -0.295]} rotation={[-0.12, 0, 0]}>
             <boxGeometry args={[1.78, 0.96, 0.02]} />
-            <meshStandardMaterial color="#21110b" emissive="#4a2818" emissiveIntensity={0.7} roughness={0.3} />
+            <meshStandardMaterial color={c.bg} emissive={c.accent4} emissiveIntensity={0.55} roughness={0.3} />
           </mesh>
           {[-0.48, -0.18, 0.12, 0.42].map((y, i) => (
             <mesh key={y} position={[-0.2 + i * 0.09, y, -0.25]} rotation={[-0.12, 0, 0]}>
               <boxGeometry args={[1.08 - i * 0.12, 0.035, 0.025]} />
-              <meshBasicMaterial color={["#e6bd82", "#c47d45", "#d49a57", "#8b5a3c"][i]} transparent opacity={0.85} />
+              <meshBasicMaterial color={lineColors[i]} transparent opacity={0.85} />
             </mesh>
           ))}
           <mesh position={[0.62, 0.43, -0.24]} rotation={[-0.12, 0, 0]}>
             <boxGeometry args={[0.06, 0.34, 0.03]} />
-            <meshBasicMaterial color="#e6bd82" transparent opacity={0.8} />
+            <meshBasicMaterial color={c.accent2} transparent opacity={0.8} />
           </mesh>
         </Float>
 
@@ -88,15 +98,15 @@ function AboutScene({ active }: { active: boolean }) {
           <group position={[-1.55, 0.55, -0.1]} rotation={[0.1, 0.2, -0.14]}>
             <mesh position={[0, 0.22, 0]}>
               <boxGeometry args={[0.42, 0.08, 0.08]} />
-              <meshStandardMaterial color="#d49a57" emissive="#6d3f22" emissiveIntensity={0.6} />
+              <meshStandardMaterial color={c.accent} emissive={c.accent4} emissiveIntensity={0.6} />
             </mesh>
             <mesh position={[-0.17, 0, 0]}>
               <boxGeometry args={[0.08, 0.48, 0.08]} />
-              <meshStandardMaterial color="#d49a57" emissive="#6d3f22" emissiveIntensity={0.6} />
+              <meshStandardMaterial color={c.accent} emissive={c.accent4} emissiveIntensity={0.6} />
             </mesh>
             <mesh position={[0, -0.22, 0]}>
               <boxGeometry args={[0.42, 0.08, 0.08]} />
-              <meshStandardMaterial color="#d49a57" emissive="#6d3f22" emissiveIntensity={0.6} />
+              <meshStandardMaterial color={c.accent} emissive={c.accent4} emissiveIntensity={0.6} />
             </mesh>
           </group>
         </Float>
@@ -105,23 +115,23 @@ function AboutScene({ active }: { active: boolean }) {
           <group position={[1.55, 0.68, -0.1]} rotation={[0.1, -0.2, 0.14]}>
             <mesh position={[0, 0.22, 0]}>
               <boxGeometry args={[0.42, 0.08, 0.08]} />
-              <meshStandardMaterial color="#e6bd82" emissive="#76502b" emissiveIntensity={0.55} />
+              <meshStandardMaterial color={c.accent2} emissive={c.accent3} emissiveIntensity={0.55} />
             </mesh>
             <mesh position={[0.17, 0, 0]}>
               <boxGeometry args={[0.08, 0.48, 0.08]} />
-              <meshStandardMaterial color="#e6bd82" emissive="#76502b" emissiveIntensity={0.55} />
+              <meshStandardMaterial color={c.accent2} emissive={c.accent3} emissiveIntensity={0.55} />
             </mesh>
             <mesh position={[0, -0.22, 0]}>
               <boxGeometry args={[0.42, 0.08, 0.08]} />
-              <meshStandardMaterial color="#e6bd82" emissive="#76502b" emissiveIntensity={0.55} />
+              <meshStandardMaterial color={c.accent2} emissive={c.accent3} emissiveIntensity={0.55} />
             </mesh>
           </group>
         </Float>
 
-        {particles.map((particle, i) => (
+        {particleLayout.map((particle, i) => (
           <mesh key={i} position={particle.position} scale={particle.scale}>
             <sphereGeometry args={[1, 12, 12]} />
-            <meshBasicMaterial color={particle.color} transparent opacity={0.55} />
+            <meshBasicMaterial color={particleTones[particle.tone]} transparent opacity={0.55} />
           </mesh>
         ))}
       </group>
@@ -162,9 +172,9 @@ function AboutOrbital() {
       ref={wrapRef}
       className="h-[240px] w-full min-w-0 overflow-hidden rounded-[1.35rem] sm:h-[280px] md:h-[320px]"
       style={{
-        background:"linear-gradient(145deg,rgba(70,43,27,.62),rgba(18,10,7,.58))",
-        border:"1px solid rgba(230,189,130,.14)",
-        boxShadow:"0 22px 70px rgba(20,9,4,.32)",
+        background:"linear-gradient(145deg,rgba(var(--card-from-rgb),.62),rgba(var(--panel-deep-rgb),.58))",
+        border:"1px solid rgba(var(--accent-2-rgb),.14)",
+        boxShadow:"0 22px 70px rgba(var(--shadow-rgb),.32)",
       }}
       aria-hidden="true">
       {mountGl ? (
@@ -195,9 +205,9 @@ function HighlightCard({ icon, title, desc, color, bg, i, inView }:
         className="p-4 sm:p-5 cursor-default h-full relative overflow-hidden rounded-[1.2rem] w-full min-w-0"
         style={{
           transition:"transform .25s cubic-bezier(.4,0,.2,1)",
-          background:"linear-gradient(145deg,rgba(70,43,27,.88),rgba(28,17,12,.82))",
-          border:"1px solid rgba(230,189,130,.16)",
-          boxShadow:"0 18px 50px rgba(24,12,6,.34), inset 0 1px 0 rgba(255,225,180,.08)",
+          background:"linear-gradient(145deg,rgba(var(--card-from-rgb),.88),rgba(var(--panel-rgb),.82))",
+          border:"1px solid rgba(var(--accent-2-rgb),.16)",
+          boxShadow:"0 18px 50px rgba(var(--shadow-rgb),.34), inset 0 1px 0 rgba(var(--accent-2-rgb),.08)",
         }}>
 
         {/* Background glow */}
@@ -210,8 +220,8 @@ function HighlightCard({ icon, title, desc, color, bg, i, inView }:
           transition={{ duration:4+i, repeat:Infinity, delay:i*.6 }}>
           {icon}
         </motion.div>
-        <h3 className="font-semibold text-sm mb-1.5 relative z-10 break-words" style={{ color:"#fff7e8" }}>{title}</h3>
-        <p className="text-xs leading-relaxed relative z-10 break-words" style={{ color:"rgba(222,228,236,0.72)" }}>{desc}</p>
+        <h3 className="font-semibold text-sm mb-1.5 relative z-10 break-words" style={{ color:"var(--fg)" }}>{title}</h3>
+        <p className="text-xs leading-relaxed relative z-10 break-words" style={{ color:"rgba(var(--fg-rgb),0.72)" }}>{desc}</p>
 
         {/* Bottom accent line */}
         <motion.div className="absolute bottom-0 left-0 right-0 h-[2px] rounded-b-[1.25rem]"
@@ -237,24 +247,24 @@ export default function About() {
       <div className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "linear-gradient(135deg,rgba(92,56,35,.35),transparent 34%),radial-gradient(circle at 12% 25%,rgba(212,154,87,.2),transparent 26%),radial-gradient(circle at 84% 72%,rgba(93,51,29,.45),transparent 30%)",
+            "linear-gradient(135deg,rgba(var(--tint-rgb),.35),transparent 34%),radial-gradient(circle at 12% 25%,rgba(var(--accent-rgb),.2),transparent 26%),radial-gradient(circle at 84% 72%,rgba(var(--card-from-rgb),.45),transparent 30%)",
         }}
         aria-hidden="true" />
 
       <div className="absolute inset-0 pointer-events-none opacity-[0.04]"
-        style={{ backgroundImage:"linear-gradient(rgba(230,189,130,.8) 1px,transparent 1px),linear-gradient(90deg,rgba(230,189,130,.8) 1px,transparent 1px)", backgroundSize:"54px 54px" }}
+        style={{ backgroundImage:"linear-gradient(rgba(var(--accent-2-rgb),.8) 1px,transparent 1px),linear-gradient(90deg,rgba(var(--accent-2-rgb),.8) 1px,transparent 1px)", backgroundSize:"54px 54px" }}
         aria-hidden="true" />
 
       <div className="max-w-5xl mx-auto relative z-10 w-full min-w-0" ref={ref}>
         <motion.div initial={{ opacity:0, y:28 }} animate={inView?{opacity:1,y:0}:{}}
           transition={{ duration:.7 }} className="text-center mb-10 sm:mb-14 px-1">
           <span className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[.24em]"
-            style={{ color:"#f7c56b", background:"rgba(247,197,107,.1)", border:"1px solid rgba(247,197,107,.22)" }}>
+            style={{ color:"var(--accent-2)", background:"rgba(var(--accent-2-rgb),.1)", border:"1px solid rgba(var(--accent-2-rgb),.22)" }}>
             <TerminalSquare size={12} />
             Who I Am
           </span>
-          <h2 className="text-3xl sm:text-5xl font-bold mt-3 leading-tight" style={{ color:"#fff2df" }}>
-            About <span style={{ color:"#d49a57" }}>Me</span>
+          <h2 className="text-3xl sm:text-5xl font-bold mt-3 leading-tight" style={{ color:"var(--fg)" }}>
+            About <span style={{ color:"var(--accent)" }}>Me</span>
           </h2>
           <motion.div className="ice-divider mt-4 mx-auto" style={{ width:0 }}
             animate={inView?{width:"120px"}:{}} transition={{ duration:.8, delay:.3 }} />
@@ -268,29 +278,29 @@ export default function About() {
             transition={{ duration:.8, delay:.15 }}>
             <div className="p-4 sm:p-8 space-y-4 sm:space-y-5 h-full relative overflow-hidden rounded-[1.35rem] w-full max-w-full box-border"
               style={{
-                background:"linear-gradient(145deg,rgba(69,42,27,.92),rgba(24,14,10,.86))",
-                border:"1px solid rgba(230,189,130,.16)",
-                boxShadow:"0 24px 80px rgba(20,9,4,.42), inset 0 1px 0 rgba(255,225,180,.08)",
+                background:"linear-gradient(145deg,rgba(var(--card-from-rgb),.92),rgba(var(--card-to-rgb),.86))",
+                border:"1px solid rgba(var(--accent-2-rgb),.16)",
+                boxShadow:"0 24px 80px rgba(var(--shadow-rgb),.42), inset 0 1px 0 rgba(var(--accent-2-rgb),.08)",
               }}>
               <div className="absolute top-4 right-4 opacity-20 spin-slow" aria-hidden="true">
                 <svg width="30" height="30" viewBox="0 0 30 30">
-                  <path d="M15 2v26M2 15h26M6 6l18 18M24 6L6 24" stroke="#d49a57" strokeWidth="1.2"/>
+                  <path d="M15 2v26M2 15h26M6 6l18 18M24 6L6 24" stroke="var(--accent)" strokeWidth="1.2"/>
                 </svg>
               </div>
 
               {about.paragraphs.map((paragraph, i) => (
                 <p key={i} className="leading-relaxed text-sm sm:text-[15px] break-words pr-6 sm:pr-8"
-                  style={{ color: i === 0 ? "rgba(248,242,229,0.9)" : "rgba(222,228,236,0.76)" }}>
+                  style={{ color: i === 0 ? "rgba(var(--fg-rgb),0.9)" : "rgba(var(--fg-rgb),0.76)" }}>
                   {paragraph.includes(site.location) ? (
                     <>
                       {paragraph.split(site.location)[0]}
-                      <span style={{ color:"#d49a57", fontWeight:600 }}>{site.location}</span>
+                      <span style={{ color:"var(--accent)", fontWeight:600 }}>{site.location}</span>
                       {paragraph.split(site.location)[1]}
                     </>
                   ) : paragraph.includes("IconMarvel") ? (
                     <>
                       {paragraph.split("IconMarvel")[0]}
-                      <span style={{ color:"#e6bd82", fontWeight:600 }}>IconMarvel</span>
+                      <span style={{ color:"var(--accent-2)", fontWeight:600 }}>IconMarvel</span>
                       {paragraph.split("IconMarvel")[1]}
                     </>
                   ) : (
@@ -306,8 +316,8 @@ export default function About() {
                     transition={{ delay:.6+i*.1 }}
                     className="text-center rounded-xl sm:rounded-2xl px-1 py-2.5 sm:px-2 sm:py-3 min-w-0"
                     style={{ background:"rgba(255,255,255,.035)", border:"1px solid rgba(255,255,255,.06)" }}>
-                    <div className="text-lg sm:text-2xl font-bold leading-none" style={{ color:["#d49a57","#c47d45","#e6bd82"][i % 3] }}>{val}</div>
-                    <div className="text-[8px] sm:text-[10px] tracking-wide mt-1 leading-tight break-words hyphens-auto" style={{ color:"rgba(222,228,236,0.58)" }}>{label}</div>
+                    <div className="text-lg sm:text-2xl font-bold leading-none" style={{ color:["var(--accent)","var(--accent-3)","var(--accent-2)"][i % 3] }}>{val}</div>
+                    <div className="text-[8px] sm:text-[10px] tracking-wide mt-1 leading-tight break-words hyphens-auto" style={{ color:"rgba(var(--fg-rgb),0.58)" }}>{label}</div>
                   </motion.div>
                 ))}
               </div>
@@ -318,7 +328,7 @@ export default function About() {
                     initial={{ opacity:0, scale:.85 }} animate={inView?{opacity:1,scale:1}:{}}
                     transition={{ delay:.7+i*.07 }} whileHover={{ scale:1.1, y:-2 }}
                     className="px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs cursor-default transition-all duration-200 max-w-full break-words"
-                    style={{ border:"1px solid rgba(212,154,87,0.28)", color:"#e6bd82", background:"rgba(92,56,35,0.36)" }}>
+                    style={{ border:"1px solid rgba(var(--accent-rgb),0.28)", color:"var(--accent-2)", background:"rgba(var(--tint-rgb),0.36)" }}>
                     {tag}
                   </motion.span>
                 ))}

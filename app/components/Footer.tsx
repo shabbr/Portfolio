@@ -20,7 +20,7 @@ export default function Footer() {
         {[10,18,8,14,22,9,16,12,20,7].map((h, i) => (
           <motion.div key={i}
             style={{ width:"1.5px", height:`${h}px`,
-              background:"linear-gradient(180deg,rgba(230,189,130,0.28),transparent)",
+              background:"linear-gradient(180deg,rgba(var(--accent-2-rgb),0.28),transparent)",
               borderRadius:"0 0 2px 2px" }}
             animate={{ opacity:[.25,.75,.25], scaleY:[.85,1.1,.85] }}
             transition={{ duration:2.2+i*.28, repeat:Infinity, delay:i*.18 }} />
@@ -30,14 +30,14 @@ export default function Footer() {
       <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="text-center sm:text-left">
           <motion.p className="text-xs"
-            style={{ color:"rgba(215,185,144,0.88)" }}
+            style={{ color:"rgba(var(--muted-rgb),0.88)" }}
             animate={{ opacity:[.78,.95,.78] }} transition={{ duration:5, repeat:Infinity }}>
             (c) {new Date().getFullYear()} {site.fullName} - Built with Next.js &amp; Tailwind CSS
           </motion.p>
           {site.phone?.trim() && (
             <a
               href={telHref(site.phone)}
-              className="mt-1 inline-flex items-center gap-1.5 text-xs text-[#e6bd82] hover:text-[#fff2df] transition-colors"
+              className="mt-1 inline-flex items-center gap-1.5 text-xs text-[var(--accent-2)] hover:text-[var(--fg)] transition-colors"
             >
               <Phone size={12} />
               {phoneDisplay}
@@ -47,26 +47,26 @@ export default function Footer() {
 
         <div className="flex items-center gap-4">
           {[
-            { href:site.github,            icon:<GithubIcon width={16} height={16} />,   label:"GitHub",   color:"#e6bd82" },
-            { href:site.linkedin,          icon:<LinkedinIcon width={16} height={16} />, label:"LinkedIn", color:"#d49a57" },
-            { href:`mailto:${site.email}`, icon:<Mail size={16} />,                      label:"Email",    color:"#c47d45" },
-            { href:whatsAppChatUrl(site.phone), icon:<WhatsAppIcon size={16} />,         label:"WhatsApp", color:"#e6bd82" },
+            { href:site.github,            icon:<GithubIcon width={16} height={16} />,   label:"GitHub",   color:"var(--accent-2)" },
+            { href:site.linkedin,          icon:<LinkedinIcon width={16} height={16} />, label:"LinkedIn", color:"var(--accent)" },
+            { href:`mailto:${site.email}`, icon:<Mail size={16} />,                      label:"Email",    color:"var(--accent-3)" },
+            { href:whatsAppChatUrl(site.phone), icon:<WhatsAppIcon size={16} />,         label:"WhatsApp", color:"var(--accent-2)" },
           ].map(({ href, icon, label, color }) => (
             <motion.a key={label} href={href}
               target={href.startsWith("mailto") || href.startsWith("tel:") ? undefined : "_blank"}
               rel="noopener noreferrer" aria-label={label}
               whileHover={{ scale:1.25, y:-3 }}
-              style={{ color:"rgba(215,185,144,0.88)" }}
+              style={{ color:"rgba(var(--muted-rgb),0.88)" }}
               className="transition-colors duration-200"
               onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = color}
-              onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "rgba(215,185,144,0.88)"}>
+              onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "rgba(var(--muted-rgb),0.88)"}>
               {icon}
             </motion.a>
           ))}
           <a
             href="/admin"
             aria-label="Admin dashboard"
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-[#e6bd82] hover:text-[#fff2df] transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--accent-2)] hover:text-[var(--fg)] transition-colors"
           >
             <Shield size={14} />
             Admin

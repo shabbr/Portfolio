@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { readThemeColors, rgba, type ThemeColors } from "@/lib/theme-colors";
+import { THEME_CHANGE_EVENT } from "./ThemeProvider";
 
 interface Flake {
   x: number; y: number; r: number;
@@ -23,11 +25,19 @@ function hexPath(ctx: CanvasRenderingContext2D, x: number, y: number, r: number)
   ctx.closePath();
 }
 
-function crystalPath(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, rot: number, opacity: number) {
+function crystalPath(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  r: number,
+  rot: number,
+  opacity: number,
+  colors: ThemeColors,
+) {
   ctx.save();
   ctx.translate(x, y); ctx.rotate(rot);
   ctx.globalAlpha = opacity;
-  ctx.strokeStyle = `rgba(230,189,130,${opacity})`;
+  ctx.strokeStyle = rgba(colors.accent2Rgb, opacity);
   ctx.lineWidth = 0.55;
   for (let i = 0; i < 6; i++) {
     ctx.save(); ctx.rotate((i * Math.PI) / 3);
@@ -50,6 +60,10 @@ export default function Snowfall() {
     let raf = 0;
     let windGust = 0, windTarget = 0, windTimer = 0;
     let running = true;
+    let colors = readThemeColors();
+
+    const onTheme = () => { colors = readThemeColors(); };
+    window.addEventListener(THEME_CHANGE_EVENT, onTheme);
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
@@ -115,16 +129,16 @@ export default function Snowfall() {
         if (f.x < -8) f.x = width + 8;
 
         if (f.type === 1) {
-          crystalPath(ctx, f.x, f.y, f.r, f.rot, f.opacity * 0.75);
+          crystalPath(ctx, f.x, f.y, f.r, f.rot, f.opacity * 0.75, colors);
         } else if (f.type === 2) {
           ctx.save(); ctx.translate(f.x, f.y); ctx.rotate(f.rot);
           hexPath(ctx, 0, 0, f.r);
-          ctx.strokeStyle = `rgba(212,154,87,${f.opacity * 0.6})`;
+          ctx.strokeStyle = rgba(colors.accentRgb, f.opacity * 0.6);
           ctx.lineWidth = 0.6; ctx.stroke(); ctx.restore();
         } else {
           const g = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, f.r * 2.2);
-          g.addColorStop(0, `rgba(230,189,130,${f.opacity})`);
-          g.addColorStop(0.5, `rgba(196,125,69,${f.opacity * 0.45})`);
+          g.addColorStop(0, rgba(colors.accent2Rgb, f.opacity));
+          g.addColorStop(0.5, rgba(colors.accent3Rgb, f.opacity * 0.45));
           g.addColorStop(1, "transparent");
           ctx.beginPath(); ctx.arc(f.x, f.y, f.r * 2.2, 0, Math.PI * 2);
           ctx.fillStyle = g; ctx.fill();
@@ -138,6 +152,7 @@ export default function Snowfall() {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener(THEME_CHANGE_EVENT, onTheme);
       if (scrollTimer !== undefined) clearTimeout(scrollTimer);
     };
   }, []);

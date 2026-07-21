@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useOrderedNav, usePortfolio } from "./PortfolioProvider";
+import ThemeSwitcher from "./ThemeSwitcher";
 
 export default function Navbar() {
   const { site } = usePortfolio();
@@ -75,7 +76,7 @@ export default function Navbar() {
           flashes browser-white during fast scroll / overscroll. */}
       <div
         aria-hidden
-        className={`pointer-events-none absolute inset-x-0 top-0 h-16 bg-[#070504] transition-opacity duration-300 ${
+        className={`pointer-events-none absolute inset-x-0 top-0 h-16 bg-bg transition-opacity duration-300 ${
           scrolled ? "opacity-100" : "opacity-0"
         }`}
       />
@@ -83,33 +84,31 @@ export default function Navbar() {
       <div
         className={`nav-surface relative transition-[margin,border-radius,box-shadow,background-color] duration-500 ${
           scrolled
-            ? "mx-3 mt-3 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.5),0_0_0_1px_rgba(230,189,130,0.14)] sm:mx-4"
+            ? "mx-3 mt-3 rounded-2xl sm:mx-4"
             : "mx-0 mt-0 rounded-none shadow-none"
         }`}
         style={{
-          background: scrolled
-            ? "rgba(22,13,9,0.96)"
-            : "rgba(18,11,8,0.88)",
+          background: scrolled ? "var(--bg-nav-scrolled)" : "var(--bg-nav)",
           backdropFilter: "blur(24px)",
           WebkitBackdropFilter: "blur(24px)",
-          // No borderBottom — a toggling border was the bright line flash.
-          // When scrolled, the 1px ring comes from box-shadow above.
           borderBottom: "none",
+          boxShadow: scrolled
+            ? "0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px var(--border-subtle)"
+            : "none",
         }}
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-12 sm:h-14 flex items-center justify-between">
           <button onClick={() => go("#home")} className="flex items-center gap-2.5 shrink-0 group">
             <motion.span
-              className="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold text-[#020810] relative overflow-hidden"
-              style={{ background: "linear-gradient(135deg,#e6bd82,#c47d45)" }}
+              className="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold text-[var(--ink)] relative overflow-hidden"
+              style={{ background: "var(--btn-bg)" }}
               whileHover={{ scale:1.1 }}>
               <span className="relative z-10">{site.initials}</span>
               <motion.span className="absolute inset-0"
-                style={{ background:"linear-gradient(135deg,#d49a57,#8b5a3c)" }}
+                style={{ background:"linear-gradient(135deg,var(--accent),var(--accent-4))" }}
                 animate={{ opacity:[0,1,0] }} transition={{ duration:3, repeat:Infinity }} />
             </motion.span>
-            <span className="text-xs font-semibold hidden sm:block tracking-widest uppercase"
-              style={{ color:"rgba(239,222,201,0.76)" }}>
+            <span className="text-xs font-semibold hidden sm:block tracking-widest uppercase text-muted/80">
               {site.firstName}
             </span>
           </button>
@@ -124,8 +123,8 @@ export default function Navbar() {
                     onClick={() => go(href)}
                     className={`relative px-3 py-1 rounded-lg text-xs sm:text-sm font-medium transition-colors duration-200 ${
                       isActive
-                        ? "text-[#e6bd82]"
-                        : "text-[rgba(239,222,201,0.72)] hover:text-[#fff2df]"
+                        ? "text-accent-2"
+                        : "text-fg/70 hover:text-fg"
                     }`}
                   >
                     {isActive && (
@@ -133,9 +132,9 @@ export default function Navbar() {
                         layoutId="nav-pill"
                         className="absolute inset-0 rounded-xl"
                         style={{
-                          background: "rgba(92,56,35,0.38)",
-                          border: "1px solid rgba(230,189,130,0.28)",
-                          boxShadow: "0 0 18px rgba(196,125,69,0.18)",
+                          background: "color-mix(in srgb, var(--accent-4) 38%, transparent)",
+                          border: "1px solid color-mix(in srgb, var(--accent-2) 28%, transparent)",
+                          boxShadow: "0 0 18px rgba(var(--accent-3-rgb),0.18)",
                         }}
                         transition={{ type: "spring", stiffness: 320, damping: 32 }}
                       />
@@ -147,13 +146,16 @@ export default function Navbar() {
             })}
           </ul>
 
-          <button
-            className="md:hidden text-[#d7b990] hover:text-[#fff2df] transition-colors p-1"
-            onClick={() => setOpen(!open)}
-            aria-label="Toggle menu"
-          >
-            {open ? <X size={20} /> : <Menu size={20} />}
-          </button>
+          <div className="flex items-center gap-1">
+            <ThemeSwitcher />
+            <button
+              className="md:hidden text-muted hover:text-fg transition-colors p-1"
+              onClick={() => setOpen(!open)}
+              aria-label="Toggle menu"
+            >
+              {open ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -166,10 +168,10 @@ export default function Navbar() {
             transition={{ duration: 0.2 }}
             className="nav-surface mx-4 mt-1 rounded-2xl overflow-hidden"
             style={{
-              background: "rgba(22,13,9,0.94)",
+              background: "var(--bg-nav-scrolled)",
               backdropFilter: "blur(28px)",
               WebkitBackdropFilter: "blur(28px)",
-              border: "1px solid rgba(230,189,130,0.16)",
+              border: "1px solid var(--border)",
             }}
           >
             <ul className="px-4 py-3 flex flex-col gap-1">
@@ -182,9 +184,14 @@ export default function Navbar() {
                       onClick={() => go(href)}
                       className={`w-full text-left px-4 py-2 rounded-lg transition-all text-xs sm:text-sm font-medium ${
                         isActive
-                          ? "text-[#e6bd82] bg-[rgba(92,56,35,0.32)]"
-                          : "text-[#d7b990] hover:text-[#fff2df] hover:bg-[rgba(92,56,35,0.32)]"
+                          ? "text-accent-2"
+                          : "text-muted hover:text-fg"
                       }`}
+                      style={
+                        isActive
+                          ? { background: "color-mix(in srgb, var(--accent-4) 32%, transparent)" }
+                          : undefined
+                      }
                     >
                       {label}
                     </button>

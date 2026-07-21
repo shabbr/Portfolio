@@ -48,16 +48,16 @@ export default function Contact() {
 
   const inputBase =
     "w-full rounded-2xl px-4 py-3 text-sm outline-none transition-all duration-300"
-    + " bg-[rgba(31,18,12,0.72)] border";
+    + " bg-[rgba(var(--panel-rgb),0.72)] border";
 
   const phoneDisplay = formatDisplayPhone(site.phone);
   const CONTACTS = [
-    { icon:<Mail size={17} />,                      label:"Email",    value:site.email,              href:`mailto:${site.email}`, color:"#d49a57" },
-    { icon:<Phone size={17} />,                     label:"Phone",    value:phoneDisplay,            href:telHref(site.phone),   color:"#e6bd82" },
-    { icon:<WhatsAppIcon size={17} />,              label:"WhatsApp", value:phoneDisplay,            href:whatsAppChatUrl(site.phone), color:"#d49a57" },
-    { icon:<MapPin size={17} />,                    label:"Location", value:site.location,           href:null,                  color:"#c47d45" },
-    { icon:<GithubIcon width={17} height={17} />,   label:"GitHub",   value:`github.com/${site.githubHandle}`, href:site.github, color:"#a96f45" },
-    { icon:<LinkedinIcon width={17} height={17} />, label:"LinkedIn", value:site.linkedinHandle,     href:site.linkedin,         color:"#d49a57" },
+    { icon:<Mail size={17} />,                      label:"Email",    value:site.email,              href:`mailto:${site.email}`, color:"var(--accent)" },
+    { icon:<Phone size={17} />,                     label:"Phone",    value:phoneDisplay,            href:telHref(site.phone),   color:"var(--accent-2)" },
+    { icon:<WhatsAppIcon size={17} />,              label:"WhatsApp", value:phoneDisplay,            href:whatsAppChatUrl(site.phone), color:"var(--accent)" },
+    { icon:<MapPin size={17} />,                    label:"Location", value:site.location,           href:null,                  color:"var(--accent-3)" },
+    { icon:<GithubIcon width={17} height={17} />,   label:"GitHub",   value:`github.com/${site.githubHandle}`, href:site.github, color:"var(--accent-3)" },
+    { icon:<LinkedinIcon width={17} height={17} />, label:"LinkedIn", value:site.linkedinHandle,     href:site.linkedin,         color:"var(--accent)" },
   ];
 
   return (
@@ -65,28 +65,28 @@ export default function Contact() {
       <div className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "linear-gradient(180deg,transparent,rgba(40,22,14,.45)),radial-gradient(circle at 18% 18%,rgba(212,154,87,.18),transparent 25%),radial-gradient(circle at 82% 62%,rgba(92,56,35,.42),transparent 30%)",
+            "linear-gradient(180deg,transparent,rgba(var(--tint-rgb),.45)),radial-gradient(circle at 18% 18%,rgba(var(--accent-rgb),.18),transparent 25%),radial-gradient(circle at 82% 62%,rgba(var(--tint-rgb),.42),transparent 30%)",
         }}
         aria-hidden="true" />
 
       <div className="absolute inset-0 pointer-events-none opacity-[0.035]"
-        style={{ backgroundImage:"linear-gradient(rgba(230,189,130,.9) 1px,transparent 1px),linear-gradient(90deg,rgba(230,189,130,.9) 1px,transparent 1px)", backgroundSize:"48px 48px" }}
+        style={{ backgroundImage:"linear-gradient(rgba(var(--accent-2-rgb),.9) 1px,transparent 1px),linear-gradient(90deg,rgba(var(--accent-2-rgb),.9) 1px,transparent 1px)", backgroundSize:"48px 48px" }}
         aria-hidden="true" />
 
       <div className="max-w-5xl mx-auto relative z-10" ref={ref}>
         <motion.div initial={{ opacity:0, y:30 }} animate={inView?{opacity:1,y:0}:{}}
           transition={{ duration:.7 }} className="text-center mb-10 sm:mb-14">
           <span className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[.24em]"
-            style={{ color:"#e6bd82", background:"rgba(92,56,35,.36)", border:"1px solid rgba(230,189,130,.22)" }}>
+            style={{ color:"var(--accent-2)", background:"rgba(var(--tint-rgb),.36)", border:"1px solid rgba(var(--accent-2-rgb),.22)" }}>
             <MessageSquareText size={12} />
             Let&apos;s Connect
           </span>
-          <h2 className="text-3xl sm:text-5xl font-bold mt-3 leading-tight" style={{ color:"#fff2df" }}>
-            Get in <span style={{ color:"#d49a57" }}>Touch</span>
+          <h2 className="text-3xl sm:text-5xl font-bold mt-3 leading-tight" style={{ color:"var(--fg)" }}>
+            Get in <span style={{ color:"var(--accent)" }}>Touch</span>
           </h2>
           <motion.div className="ice-divider mt-4 mx-auto" style={{ width:0 }}
             animate={inView?{width:"120px"}:{}} transition={{ duration:.8, delay:.3 }} />
-          <p className="mt-5 max-w-md mx-auto text-sm leading-relaxed" style={{ color:"rgba(239,222,201,0.72)" }}>
+          <p className="mt-5 max-w-md mx-auto text-sm leading-relaxed" style={{ color:"rgba(var(--fg-rgb),0.72)" }}>
             Open to new opportunities, collaborations, or just a friendly chat about tech.
           </p>
         </motion.div>
@@ -97,17 +97,17 @@ export default function Contact() {
             transition={{ duration:.8, delay:.2 }} className="h-full">
             <div className="relative h-full min-h-[520px] overflow-hidden rounded-[1.35rem] p-5 sm:p-6 flex flex-col"
               style={{
-                background:"linear-gradient(145deg,rgba(70,43,27,.92),rgba(24,14,10,.86))",
-                border:"1px solid rgba(230,189,130,.16)",
-                boxShadow:"0 24px 80px rgba(20,9,4,.42), inset 0 1px 0 rgba(255,225,180,.08)",
+                background:"linear-gradient(145deg,rgba(var(--card-from-rgb),.92),rgba(var(--card-to-rgb),.86))",
+                border:"1px solid rgba(var(--accent-2-rgb),.16)",
+                boxShadow:"0 24px 80px rgba(var(--shadow-rgb),.42), inset 0 1px 0 rgba(var(--accent-2-rgb),.08)",
               }}>
               <div className="relative mb-7">
                 <div className="mb-3 inline-flex h-11 w-11 items-center justify-center rounded-2xl"
-                  style={{ color:"#1d1009", background:"linear-gradient(135deg,#e6bd82,#c47d45)", boxShadow:"0 18px 36px rgba(196,125,69,.25)" }}>
+                  style={{ color:"var(--btn-fg)", background:"var(--btn-bg)", boxShadow:"0 18px 36px rgba(var(--accent-3-rgb),.25)" }}>
                   <TerminalSquare size={21} />
                 </div>
-                <h3 className="text-xl font-bold" style={{ color:"#fff2df" }}>Start a project conversation</h3>
-                <p className="mt-2 text-sm leading-relaxed" style={{ color:"rgba(239,222,201,.7)" }}>
+                <h3 className="text-xl font-bold" style={{ color:"var(--fg)" }}>Start a project conversation</h3>
+                <p className="mt-2 text-sm leading-relaxed" style={{ color:"rgba(var(--fg-rgb),.7)" }}>
                   Send the idea, timeline, or rough problem. I&apos;ll reply with the next practical step.
                 </p>
               </div>
@@ -118,7 +118,7 @@ export default function Contact() {
                     initial={{ opacity:0, x:-20 }} animate={inView?{opacity:1,x:0}:{}}
                     transition={{ delay:.3+i*.1 }}
                     className="group flex items-start gap-4 rounded-2xl p-3 transition-all duration-300"
-                    style={{ background:"rgba(255,236,207,.04)", border:"1px solid rgba(230,189,130,.09)" }}>
+                    style={{ background:"rgba(var(--fg-rgb),.04)", border:"1px solid rgba(var(--accent-2-rgb),.09)" }}>
                     <motion.div
                       className="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0"
                       style={{ background:`${color}14`, border:`1px solid ${color}33`, color }}
@@ -126,19 +126,19 @@ export default function Contact() {
                       {icon}
                     </motion.div>
                     <div>
-                      <p className="text-xs mb-0.5" style={{ color:"rgba(230,189,130,0.68)" }}>{label}</p>
+                      <p className="text-xs mb-0.5" style={{ color:"rgba(var(--accent-2-rgb),0.68)" }}>{label}</p>
                       {href ? (
                         <a href={href}
                           target={href.startsWith("mailto") || href.startsWith("tel:") ? undefined : "_blank"}
                           rel="noopener noreferrer"
                           className="text-sm break-all transition-colors duration-200"
-                          style={{ color:"rgba(255,242,223,0.9)" }}
+                          style={{ color:"rgba(var(--fg-rgb),0.9)" }}
                           onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = color}
-                          onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "rgba(255,242,223,0.9)"}>
+                          onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "rgba(var(--fg-rgb),0.9)"}>
                           {value}
                         </a>
                       ) : (
-                        <p className="text-sm" style={{ color:"rgba(255,242,223,0.9)" }}>{value}</p>
+                        <p className="text-sm" style={{ color:"rgba(var(--fg-rgb),0.9)" }}>{value}</p>
                       )}
                     </div>
                   </motion.div>
@@ -152,13 +152,13 @@ export default function Contact() {
             transition={{ duration:.8, delay:.3 }} className="h-full">
             <form onSubmit={handleSubmit} className="relative h-full min-h-[520px] overflow-hidden rounded-[1.35rem] p-5 sm:p-6 flex flex-col"
               style={{
-                background:"linear-gradient(145deg,rgba(58,34,22,.92),rgba(17,10,7,.88))",
-                border:"1px solid rgba(230,189,130,.16)",
-                boxShadow:"0 24px 80px rgba(20,9,4,.4), inset 0 1px 0 rgba(255,225,180,.08)",
+                background:"linear-gradient(145deg,rgba(var(--card-from-rgb),.92),rgba(var(--panel-deep-rgb),.88))",
+                border:"1px solid rgba(var(--accent-2-rgb),.16)",
+                boxShadow:"0 24px 80px rgba(var(--shadow-rgb),.4), inset 0 1px 0 rgba(var(--accent-2-rgb),.08)",
               }}>
-              <div className="mb-5 border-b pb-5" style={{ borderColor:"rgba(230,189,130,.1)" }}>
-                <h3 className="text-xl font-bold" style={{ color:"#fff2df" }}>Tell me about your project</h3>
-                <p className="mt-2 text-sm leading-relaxed" style={{ color:"rgba(239,222,201,.68)" }}>
+              <div className="mb-5 border-b pb-5" style={{ borderColor:"rgba(var(--accent-2-rgb),.1)" }}>
+                <h3 className="text-xl font-bold" style={{ color:"var(--fg)" }}>Tell me about your project</h3>
+                <p className="mt-2 text-sm leading-relaxed" style={{ color:"rgba(var(--fg-rgb),.68)" }}>
                   Share a few details and I&apos;ll respond with a practical next step.
                 </p>
               </div>
@@ -169,7 +169,7 @@ export default function Contact() {
                   { id:"email", label:"Email", type:"email", placeholder:"your@email.com" },
                 ].map(({ id, label, type, placeholder }) => (
                   <div key={id}>
-                    <label htmlFor={id} className="text-xs mb-1.5 block" style={{ color:"rgba(230,189,130,0.82)" }}>
+                    <label htmlFor={id} className="text-xs mb-1.5 block" style={{ color:"rgba(var(--accent-2-rgb),0.82)" }}>
                       {label}
                     </label>
                     <input id={id} name={id} type={type} required placeholder={placeholder}
@@ -178,18 +178,18 @@ export default function Contact() {
                       onFocus={() => setFocused(id)}
                       onBlur={() => setFocused(null)}
                       disabled={status === "sending"}
-                      style={{ color:"#fff2df" }}
-                      className={`${inputBase} placeholder:text-[rgba(196,125,69,0.48)] ${
+                      style={{ color:"var(--fg)" }}
+                      className={`${inputBase} placeholder:text-[rgba(var(--accent-3-rgb),0.48)] ${
                         focused === id
-                          ? "border-[rgba(230,189,130,0.55)] shadow-[0_0_20px_rgba(212,154,87,0.16)]"
-                          : "border-[rgba(230,189,130,0.14)]"
+                          ? "border-[rgba(var(--accent-2-rgb),0.55)] shadow-[0_0_20px_rgba(var(--accent-rgb),0.16)]"
+                          : "border-[rgba(var(--accent-2-rgb),0.14)]"
                       } disabled:opacity-50`}
                     />
                   </div>
                 ))}
 
                 <div>
-                  <label htmlFor="message" className="text-xs mb-1.5 block" style={{ color:"rgba(230,189,130,0.82)" }}>
+                  <label htmlFor="message" className="text-xs mb-1.5 block" style={{ color:"rgba(var(--accent-2-rgb),0.82)" }}>
                     Message
                   </label>
                   <textarea id="message" name="message" required rows={6}
@@ -199,11 +199,11 @@ export default function Contact() {
                     onFocus={() => setFocused("message")}
                     onBlur={() => setFocused(null)}
                     disabled={status === "sending"}
-                    style={{ color:"#fff2df" }}
-                    className={`${inputBase} resize-none placeholder:text-[rgba(196,125,69,0.48)] ${
+                    style={{ color:"var(--fg)" }}
+                    className={`${inputBase} resize-none placeholder:text-[rgba(var(--accent-3-rgb),0.48)] ${
                       focused === "message"
-                        ? "border-[rgba(230,189,130,0.55)] shadow-[0_0_20px_rgba(212,154,87,0.16)]"
-                        : "border-[rgba(230,189,130,0.14)]"
+                        ? "border-[rgba(var(--accent-2-rgb),0.55)] shadow-[0_0_20px_rgba(var(--accent-rgb),0.16)]"
+                        : "border-[rgba(var(--accent-2-rgb),0.14)]"
                     } disabled:opacity-50`}
                   />
                 </div>
@@ -212,7 +212,7 @@ export default function Contact() {
               {status === "success" && (
                 <motion.div initial={{ opacity:0, y:-8 }} animate={{ opacity:1, y:0 }}
                   className="flex items-center gap-2 text-sm rounded-xl px-4 py-3"
-                  style={{ color:"#e6bd82", background:"rgba(92,56,35,0.35)", border:"1px solid rgba(230,189,130,0.2)" }}>
+                  style={{ color:"var(--accent-2)", background:"rgba(var(--tint-rgb),0.35)", border:"1px solid rgba(var(--accent-2-rgb),0.2)" }}>
                   <CheckCircle size={16} />
                   Message sent! I&apos;ll get back to you soon.
                 </motion.div>
@@ -232,17 +232,17 @@ export default function Contact() {
                 whileHover={status === "idle" ? { scale:1.02, y:-1 } : {}}
                 whileTap={status === "idle" ? { scale:.97 } : {}}
                 className="w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 relative overflow-hidden disabled:opacity-70 disabled:cursor-not-allowed"
-                style={{ background:"linear-gradient(135deg,#e6bd82,#c47d45)", color:"#1d1009",
-                  boxShadow:"0 18px 36px rgba(196,125,69,0.28)" }}>
+                style={{ background:"var(--btn-bg)", color:"var(--btn-fg)",
+                  boxShadow:"0 18px 36px rgba(var(--accent-3-rgb),0.28)" }}>
                 {status === "idle" && (
                   <motion.span className="absolute inset-0"
                     animate={{ opacity:[0,.25,0] }} transition={{ duration:2, repeat:Infinity }}
-                    style={{ background:"linear-gradient(135deg,#fff2df,#d49a57)" }} />
+                    style={{ background:"linear-gradient(135deg,var(--fg),var(--accent))" }} />
                 )}
                 <span className="relative flex items-center gap-2">
                   {status === "sending" && (
                     <>
-                      <motion.span className="w-4 h-4 border-2 border-[#1d1009] border-t-transparent rounded-full"
+                      <motion.span className="w-4 h-4 border-2 border-[var(--ink)] border-t-transparent rounded-full"
                         animate={{ rotate:360 }} transition={{ duration:.8, repeat:Infinity, ease:"linear" }} />
                       Sending...
                     </>

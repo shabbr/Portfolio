@@ -9,5 +9,18 @@
     "recoveryEmail": "ashabbar439@gmail.com",
     "resetTokenHash": null,
     "resetTokenExpires": null
+  },
+  "theme": {
+    "defaultTheme": "copper",
+    "enabledThemes": [
+      "copper",
+      "slate",
+      "emerald",
+      "dark",
+      "light",
+      "azure",
+      "violet"
+    ],
+    "switcherEnabled": false
   }
 }

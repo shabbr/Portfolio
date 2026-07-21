@@ -3,7 +3,10 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import DeferredFloatingCode from "./components/DeferredFloatingCode";
 import JsonLd from "./components/JsonLd";
+import ThemeRoot from "./components/ThemeRoot";
 import { readPortfolio } from "@/lib/portfolio-store";
+import { readSettings } from "@/lib/settings-store";
+import { THEME_STORAGE_KEY, getThemeMeta } from "@/lib/themes";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,13 +20,14 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
-// theme-color makes the mobile browser paint its UI strip (address bar,
-// overscroll area) with the site background instead of white — this is what
-// flashes as a "white line" at the top during fast scrolling.
-export const viewport: Viewport = {
-  themeColor: "#070504",
-  colorScheme: "dark",
-};
+export async function generateViewport(): Promise<Viewport> {
+  const { theme } = await readSettings();
+  const meta = getThemeMeta(theme.defaultTheme);
+  return {
+    themeColor: meta.themeColor,
+    colorScheme: meta.colorScheme,
+  };
+}
 
 function siteUrl(): string {
   return (
@@ -130,24 +134,42 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { theme } = await readSettings();
+  const themeConfig = {
+    defaultTheme: theme.defaultTheme,
+    enabledThemes: theme.enabledThemes,
+    switcherEnabled: theme.switcherEnabled,
+    themes: theme.enabledThemes.map((id) => getThemeMeta(id)),
+  };
+
+  // Apply stored visitor theme before paint when switcher is allowed (avoids FOUC).
+  const themeBoot = `(function(){try{var k=${JSON.stringify(THEME_STORAGE_KEY)};var enabled=${JSON.stringify(theme.enabledThemes)};var switcher=${JSON.stringify(theme.switcherEnabled)};var def=${JSON.stringify(theme.defaultTheme)};var stored=switcher?localStorage.getItem(k):null;var id=(switcher&&stored&&enabled.indexOf(stored)!==-1)?stored:def;document.documentElement.setAttribute("data-theme",id);}catch(e){}})();`;
+
   return (
     <html
       lang="en"
+      data-theme={theme.defaultTheme}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeBoot }} />
+      </head>
       {/* suppressHydrationWarning: browser extensions (e.g. ColorZilla) inject body attrs */}
       <body
-        className="min-h-full flex flex-col bg-[#070504] text-[#fff2df]"
+        className="min-h-full flex flex-col bg-bg text-fg"
         suppressHydrationWarning
       >
-        <JsonLd />
-        <DeferredFloatingCode />
-        {children}
+        <ThemeRoot config={themeConfig}>
+          <JsonLd />
+          <DeferredFloatingCode />
+          {children}
+        </ThemeRoot>
       </body>
     </html>
   );

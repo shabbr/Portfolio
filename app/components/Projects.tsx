@@ -10,12 +10,12 @@ import { usePortfolio, useVisibleProjects } from "./PortfolioProvider";
 import type { ProjectItem } from "@/lib/portfolio-types";
 
 const ACCENTS = [
-  { color:"#e6bd82", bg:"rgba(230,189,130,0.11)", glow:"rgba(230,189,130,0.22)" },
-  { color:"#d49a57", bg:"rgba(212,154,87,0.12)",  glow:"rgba(212,154,87,0.24)"  },
-  { color:"#c47d45", bg:"rgba(196,125,69,0.12)",  glow:"rgba(196,125,69,0.24)"  },
-  { color:"#a96f45", bg:"rgba(169,111,69,0.13)",  glow:"rgba(169,111,69,0.24)"  },
-  { color:"#f0d0a0", bg:"rgba(240,208,160,0.1)",  glow:"rgba(240,208,160,0.2)"  },
-  { color:"#8b5a3c", bg:"rgba(139,90,60,0.18)",   glow:"rgba(139,90,60,0.25)"   },
+  { color:"var(--accent-2)", bg:"rgba(var(--accent-2-rgb),0.11)", glow:"rgba(var(--accent-2-rgb),0.22)" },
+  { color:"var(--accent)", bg:"rgba(var(--accent-rgb),0.12)",  glow:"rgba(var(--accent-rgb),0.24)"  },
+  { color:"var(--accent-3)", bg:"rgba(var(--accent-3-rgb),0.12)",  glow:"rgba(var(--accent-3-rgb),0.24)"  },
+  { color:"var(--accent-4)", bg:"rgba(var(--accent-4-rgb),0.14)",  glow:"rgba(var(--accent-4-rgb),0.24)"  },
+  { color:"var(--accent-2)", bg:"rgba(var(--accent-2-rgb),0.1)",  glow:"rgba(var(--accent-2-rgb),0.2)"  },
+  { color:"var(--accent)", bg:"rgba(var(--accent-rgb),0.18)",   glow:"rgba(var(--accent-rgb),0.25)"   },
 ];
 
 function ProjectCard({ project, i, inView }: { project: ProjectItem; i: number; inView: boolean }) {
@@ -37,9 +37,9 @@ function ProjectCard({ project, i, inView }: { project: ProjectItem; i: number; 
         className="p-5 sm:p-6 flex flex-col gap-4 h-full cursor-default relative overflow-hidden group rounded-[1.2rem]"
         style={{
           transition:"transform .25s cubic-bezier(.4,0,.2,1)",
-          background:"linear-gradient(145deg,rgba(70,43,27,.88),rgba(24,14,10,.84))",
-          border:"1px solid rgba(230,189,130,.14)",
-          boxShadow:"0 20px 60px rgba(20,9,4,.34), inset 0 1px 0 rgba(255,225,180,.07)",
+          background:"linear-gradient(145deg,rgba(var(--card-from-rgb),.88),rgba(var(--card-to-rgb),.84))",
+          border:"1px solid rgba(var(--accent-2-rgb),.14)",
+          boxShadow:"0 20px 60px rgba(var(--shadow-rgb),.34), inset 0 1px 0 rgba(var(--accent-2-rgb),.07)",
         }}>
 
         <div className="absolute top-0 left-0 right-0 h-[2px] rounded-t-[1.25rem]"
@@ -68,7 +68,7 @@ function ProjectCard({ project, i, inView }: { project: ProjectItem; i: number; 
         </motion.div>
 
         <div className="relative z-10 flex items-start justify-between gap-2">
-          <h3 className="font-bold text-base leading-snug" style={{ color:"#fff2df" }}>
+          <h3 className="font-bold text-base leading-snug" style={{ color:"var(--fg)" }}>
             {project.title}
           </h3>
           {project.featured && (
@@ -78,7 +78,7 @@ function ProjectCard({ project, i, inView }: { project: ProjectItem; i: number; 
             </span>
           )}
         </div>
-        <p className="text-sm leading-relaxed flex-1 relative z-10" style={{ color:"rgba(239,222,201,0.72)" }}>
+        <p className="text-sm leading-relaxed flex-1 relative z-10" style={{ color:"rgba(var(--fg-rgb),0.72)" }}>
           {project.description}
         </p>
 
@@ -93,12 +93,12 @@ function ProjectCard({ project, i, inView }: { project: ProjectItem; i: number; 
         </div>
 
         <div className="pt-2 border-t flex items-center justify-between relative z-10"
-          style={{ borderColor:"rgba(230,189,130,0.12)" }}>
+          style={{ borderColor:"rgba(var(--accent-2-rgb),0.12)" }}>
           <a href={codeHref} target="_blank" rel="noopener noreferrer"
             className="flex items-center gap-1.5 text-xs transition-colors duration-200"
-            style={{ color:"rgba(215,185,144,0.66)" }}
+            style={{ color:"rgba(var(--muted-rgb),0.66)" }}
             onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = accent.color}
-            onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "rgba(215,185,144,0.66)"}
+            onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "rgba(var(--muted-rgb),0.66)"}
             aria-label={`Open ${project.title}`}>
             <GithubIcon width={13} height={13} />
             <span>{project.liveUrl && !project.githubUrl ? "View Live" : "View Code"}</span>
@@ -125,7 +125,7 @@ export default function Projects() {
     <section id="projects" className="relative py-20 px-4 overflow-hidden sm:py-24 sm:px-6 lg:py-28">
       <motion.div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
         style={{ width:"800px", height:"600px",
-          background:"radial-gradient(ellipse,rgba(212,154,87,0.12) 0%,rgba(91,52,31,0.12) 48%,transparent 70%)" }}
+          background:"radial-gradient(ellipse,rgba(var(--accent-rgb),0.12) 0%,rgba(var(--tint-rgb),0.12) 48%,transparent 70%)" }}
         animate={inView ? { scale:[1,1.15,1], rotate:[0,5,0] } : { scale: 1, rotate: 0 }}
         transition={{ duration:10, repeat:Infinity }}
         aria-hidden="true" />
@@ -134,16 +134,16 @@ export default function Projects() {
         <motion.div initial={{ opacity:0, y:28 }} animate={inView?{opacity:1,y:0}:{}}
           transition={{ duration:.7 }} className="text-center mb-10 sm:mb-14">
           <span className="inline-flex rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[.24em]"
-            style={{ color:"#e6bd82", background:"rgba(92,56,35,.36)", border:"1px solid rgba(230,189,130,.22)" }}>
+            style={{ color:"var(--accent-2)", background:"rgba(var(--tint-rgb),.36)", border:"1px solid rgba(var(--accent-2-rgb),.22)" }}>
             What I&apos;ve Built
           </span>
-          <h2 className="text-3xl sm:text-5xl font-bold mt-3 leading-tight" style={{ color:"#fff2df" }}>
-            Featured <span style={{ color:"#d49a57" }}>Projects</span>
+          <h2 className="text-3xl sm:text-5xl font-bold mt-3 leading-tight" style={{ color:"var(--fg)" }}>
+            Featured <span style={{ color:"var(--accent)" }}>Projects</span>
           </h2>
           <motion.div className="ice-divider mt-4 mx-auto" style={{ width:0 }}
             animate={inView?{width:"120px"}:{}} transition={{ duration:.8, delay:.3 }} />
           <motion.p className="mt-4 text-sm max-w-md mx-auto"
-            style={{ color:"rgba(239,222,201,0.7)" }}
+            style={{ color:"rgba(var(--fg-rgb),0.7)" }}
             initial={{ opacity:0 }} animate={inView?{opacity:1}:{}}
             transition={{ delay:.5 }}>
             A selection of systems and applications I&apos;ve designed and shipped.
@@ -162,9 +162,9 @@ export default function Projects() {
             whileHover={{ scale:1.05, y:-3 }} whileTap={{ scale:.97 }}
             className="inline-flex items-center gap-2 px-7 py-3 rounded-full text-sm transition-all duration-300"
             style={{
-              background:"rgba(31,18,12,0.62)",
-              border:"1px solid rgba(230,189,130,0.25)",
-              color:"#e6bd82",
+              background:"rgba(var(--panel-rgb),0.62)",
+              border:"1px solid rgba(var(--accent-2-rgb),0.25)",
+              color:"var(--accent-2)",
             }}>
             <GithubIcon width={15} height={15} />
             More on GitHub
@@ -173,9 +173,9 @@ export default function Projects() {
             whileHover={{ scale:1.05, y:-3 }} whileTap={{ scale:.97 }}
             className="inline-flex items-center gap-2 px-7 py-3 rounded-full text-sm transition-all duration-300"
             style={{
-              background:"rgba(31,18,12,0.62)",
-              border:"1px solid rgba(230,189,130,0.25)",
-              color:"#e6bd82",
+              background:"rgba(var(--panel-rgb),0.62)",
+              border:"1px solid rgba(var(--accent-2-rgb),0.25)",
+              color:"var(--accent-2)",
             }}>
             <LinkedinIcon width={15} height={15} />
             LinkedIn

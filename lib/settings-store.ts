@@ -7,6 +7,11 @@ import {
   storageWriteHint,
   writeJsonBlob,
 } from "./blob-store";
+import {
+  DEFAULT_THEME_SETTINGS,
+  normalizeThemeSettings,
+  type ThemeSettings,
+} from "./themes";
 
 export type EmailSettings = {
   resendApiKey: string;
@@ -26,7 +31,10 @@ export type AuthSettings = {
 export type AppSettings = {
   email: EmailSettings;
   auth: AuthSettings;
+  theme: ThemeSettings;
 };
+
+export type { ThemeSettings };
 
 const SETTINGS_PATH = path.join(process.cwd(), "data", "settings.json");
 const BLOB_PATH = "cms/settings.json";
@@ -44,6 +52,7 @@ function defaultsFromEnv(): AppSettings {
       resetTokenHash: null,
       resetTokenExpires: null,
     },
+    theme: { ...DEFAULT_THEME_SETTINGS },
   };
 }
 
@@ -61,6 +70,7 @@ function mergeSettings(raw: Partial<AppSettings> | null | undefined): AppSetting
       resetTokenHash: raw?.auth?.resetTokenHash ?? null,
       resetTokenExpires: raw?.auth?.resetTokenExpires ?? null,
     },
+    theme: normalizeThemeSettings(raw?.theme ?? base.theme),
   };
 }
 

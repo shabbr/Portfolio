@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion } from "framer-motion";
 import { usePageVisible } from "@/lib/usePageVisible";
@@ -29,7 +29,7 @@ export default function FloatingCode({ className = "" }: FloatingCodeProps) {
         <motion.div
           key={i}
           className="absolute text-xs font-mono font-bold opacity-0"
-          style={{ color: "#e6bd82" }}
+          style={{ color: "var(--accent-2)" }}
           initial={{ x: el.x, y: el.y, opacity: 0 }}
           animate={
             active

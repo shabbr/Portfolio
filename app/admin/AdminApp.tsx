@@ -15,6 +15,7 @@ import {
   KeyRound,
   LogOut,
   Mail,
+  Palette,
   Plus,
   Save,
   Settings2,
@@ -35,6 +36,7 @@ import type {
 import { createId, reindexOrder, sortByOrder } from "@/lib/portfolio-types";
 import EmailSettingsPanel from "./EmailSettingsPanel";
 import PasswordSettingsPanel from "./PasswordSettingsPanel";
+import ThemeSettingsPanel from "./ThemeSettingsPanel";
 
 type TabId =
   | "overview"
@@ -45,6 +47,7 @@ type TabId =
   | "skills"
   | "nav"
   | "email"
+  | "theme"
   | "security";
 
 const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
@@ -56,6 +59,7 @@ const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: "skills", label: "Skills", icon: <Wrench size={16} /> },
   { id: "nav", label: "Navigation", icon: <Link2 size={16} /> },
   { id: "email", label: "Email", icon: <Mail size={16} /> },
+  { id: "theme", label: "Theme", icon: <Palette size={16} /> },
   { id: "security", label: "Password", icon: <KeyRound size={16} /> },
 ];
 const fieldClass =
@@ -401,6 +405,7 @@ export default function AdminApp() {
           {tab === "skills" && <SkillsTab data={data} setData={setData} />}
           {tab === "nav" && <NavTab data={data} setData={setData} />}
           {tab === "email" && <EmailSettingsPanel />}
+          {tab === "theme" && <ThemeSettingsPanel />}
           {tab === "security" && <PasswordSettingsPanel />}
         </main>
       </div>
@@ -435,13 +440,22 @@ function OverviewTab({ data, onGo }: { data: PortfolioData; onGo: (t: TabId) => 
         <p className="text-sm"><span className="text-[#e6bd82]">Email:</span> {data.site.email}</p>
         <p className="text-sm mt-1"><span className="text-[#e6bd82]">GitHub:</span> {data.site.github}</p>
         <p className="text-sm mt-1"><span className="text-[#e6bd82]">LinkedIn:</span> {data.site.linkedin}</p>
-        <button
-          type="button"
-          onClick={() => onGo("email")}
-          className="mt-4 text-sm text-[#e6bd82] hover:underline"
-        >
-          Configure contact email delivery →
-        </button>
+        <div className="mt-4 flex flex-wrap gap-4">
+          <button
+            type="button"
+            onClick={() => onGo("email")}
+            className="text-sm text-[#e6bd82] hover:underline"
+          >
+            Configure contact email delivery →
+          </button>
+          <button
+            type="button"
+            onClick={() => onGo("theme")}
+            className="text-sm text-[#e6bd82] hover:underline"
+          >
+            Theme & visitor switcher →
+          </button>
+        </div>
       </div>
     </div>
   );
