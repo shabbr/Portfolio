@@ -38,7 +38,10 @@ export default function Navbar() {
       if (ticking) return;
       ticking = true;
       requestAnimationFrame(() => {
-        setScrolled(window.scrollY > 40);
+        // Hysteresis: enter scrolled at 40px, leave only below 10px —
+        // stops the top gap/fill from flickering during fast flings.
+        const y = window.scrollY;
+        setScrolled((prev) => (prev ? y > 10 : y > 40));
         updateActiveFromScroll();
         ticking = false;
       });
@@ -68,19 +71,30 @@ export default function Navbar() {
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
       className="fixed top-0 left-0 right-0 z-50"
     >
+      {/* Solid dark fill under the floating pill so the mt-3 gap never
+          flashes browser-white during fast scroll / overscroll. */}
       <div
-        className={`transition-all duration-500 ${
+        aria-hidden
+        className={`pointer-events-none absolute inset-x-0 top-0 h-16 bg-[#070504] transition-opacity duration-300 ${
+          scrolled ? "opacity-100" : "opacity-0"
+        }`}
+      />
+
+      <div
+        className={`nav-surface relative transition-[margin,border-radius,box-shadow,background-color] duration-500 ${
           scrolled
             ? "mx-3 mt-3 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.5),0_0_0_1px_rgba(230,189,130,0.14)] sm:mx-4"
             : "mx-0 mt-0 rounded-none shadow-none"
         }`}
         style={{
           background: scrolled
-            ? "rgba(22,13,9,0.88)"
-            : "rgba(18,11,8,0.72)",
+            ? "rgba(22,13,9,0.96)"
+            : "rgba(18,11,8,0.88)",
           backdropFilter: "blur(24px)",
           WebkitBackdropFilter: "blur(24px)",
-          borderBottom: scrolled ? "none" : "1px solid rgba(230,189,130,0.1)",
+          // No borderBottom — a toggling border was the bright line flash.
+          // When scrolled, the 1px ring comes from box-shadow above.
+          borderBottom: "none",
         }}
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-12 sm:h-14 flex items-center justify-between">
@@ -150,7 +164,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2 }}
-            className="mx-4 mt-1 rounded-2xl overflow-hidden"
+            className="nav-surface mx-4 mt-1 rounded-2xl overflow-hidden"
             style={{
               background: "rgba(22,13,9,0.94)",
               backdropFilter: "blur(28px)",

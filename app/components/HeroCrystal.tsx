@@ -18,6 +18,9 @@ export default function HeroCrystal() {
     const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
 
+    // Users who prefer reduced motion get a calm, static hero.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
     let raf = 0;
     let W = 0, H = 0, mx = 0.5, my = 0.5;
     let inView = true;

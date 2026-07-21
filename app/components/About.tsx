@@ -160,7 +160,7 @@ function AboutOrbital() {
   return (
     <div
       ref={wrapRef}
-      className="h-[240px] overflow-hidden rounded-[1.35rem] sm:h-[280px] md:h-[320px]"
+      className="h-[240px] w-full min-w-0 overflow-hidden rounded-[1.35rem] sm:h-[280px] md:h-[320px]"
       style={{
         background:"linear-gradient(145deg,rgba(70,43,27,.62),rgba(18,10,7,.58))",
         border:"1px solid rgba(230,189,130,.14)",
@@ -190,9 +190,9 @@ function HighlightCard({ icon, title, desc, color, bg, i, inView }:
       initial={{ opacity:0, y:32, scale:.9 }}
       animate={inView?{opacity:1,y:0,scale:1}:{}}
       transition={{ duration:.55, delay:.25+i*.12 }}
-      className="perspective-1000">
+      className="perspective-1000 w-full min-w-0">
       <div ref={ref} onMouseMove={onMove} onMouseLeave={onLeave}
-        className="p-4 sm:p-5 cursor-default h-full relative overflow-hidden rounded-[1.2rem]"
+        className="p-4 sm:p-5 cursor-default h-full relative overflow-hidden rounded-[1.2rem] w-full min-w-0"
         style={{
           transition:"transform .25s cubic-bezier(.4,0,.2,1)",
           background:"linear-gradient(145deg,rgba(70,43,27,.88),rgba(28,17,12,.82))",
@@ -210,8 +210,8 @@ function HighlightCard({ icon, title, desc, color, bg, i, inView }:
           transition={{ duration:4+i, repeat:Infinity, delay:i*.6 }}>
           {icon}
         </motion.div>
-        <h3 className="font-semibold text-sm mb-1.5 relative z-10" style={{ color:"#fff7e8" }}>{title}</h3>
-        <p className="text-xs leading-relaxed relative z-10" style={{ color:"rgba(222,228,236,0.72)" }}>{desc}</p>
+        <h3 className="font-semibold text-sm mb-1.5 relative z-10 break-words" style={{ color:"#fff7e8" }}>{title}</h3>
+        <p className="text-xs leading-relaxed relative z-10 break-words" style={{ color:"rgba(222,228,236,0.72)" }}>{desc}</p>
 
         {/* Bottom accent line */}
         <motion.div className="absolute bottom-0 left-0 right-0 h-[2px] rounded-b-[1.25rem]"
@@ -245,9 +245,9 @@ export default function About() {
         style={{ backgroundImage:"linear-gradient(rgba(230,189,130,.8) 1px,transparent 1px),linear-gradient(90deg,rgba(230,189,130,.8) 1px,transparent 1px)", backgroundSize:"54px 54px" }}
         aria-hidden="true" />
 
-      <div className="max-w-5xl mx-auto relative z-10" ref={ref}>
+      <div className="max-w-5xl mx-auto relative z-10 w-full min-w-0" ref={ref}>
         <motion.div initial={{ opacity:0, y:28 }} animate={inView?{opacity:1,y:0}:{}}
-          transition={{ duration:.7 }} className="text-center mb-10 sm:mb-14">
+          transition={{ duration:.7 }} className="text-center mb-10 sm:mb-14 px-1">
           <span className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[.24em]"
             style={{ color:"#f7c56b", background:"rgba(247,197,107,.1)", border:"1px solid rgba(247,197,107,.22)" }}>
             <TerminalSquare size={12} />
@@ -260,11 +260,13 @@ export default function About() {
             animate={inView?{width:"120px"}:{}} transition={{ duration:.8, delay:.3 }} />
         </motion.div>
 
-        <div className="grid lg:grid-cols-5 gap-5 sm:gap-7 md:gap-8 items-start">
-          <motion.div className="lg:col-span-3"
-            initial={{ opacity:0, x:-40 }} animate={inView?{opacity:1,x:0}:{}}
+        {/* min-w-0 on grid children is required — CSS Grid defaults to min-width:auto,
+            which lets the 3-col stats row force the card wider than the phone. */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 sm:gap-7 md:gap-8 items-start w-full min-w-0">
+          <motion.div className="lg:col-span-3 w-full min-w-0"
+            initial={{ opacity:0, y:28 }} animate={inView?{opacity:1,y:0}:{}}
             transition={{ duration:.8, delay:.15 }}>
-            <div className="p-5 sm:p-8 space-y-5 h-full relative overflow-hidden rounded-[1.35rem]"
+            <div className="p-4 sm:p-8 space-y-4 sm:space-y-5 h-full relative overflow-hidden rounded-[1.35rem] w-full max-w-full box-border"
               style={{
                 background:"linear-gradient(145deg,rgba(69,42,27,.92),rgba(24,14,10,.86))",
                 border:"1px solid rgba(230,189,130,.16)",
@@ -277,7 +279,7 @@ export default function About() {
               </div>
 
               {about.paragraphs.map((paragraph, i) => (
-                <p key={i} className="leading-relaxed text-sm sm:text-[15px]"
+                <p key={i} className="leading-relaxed text-sm sm:text-[15px] break-words pr-6 sm:pr-8"
                   style={{ color: i === 0 ? "rgba(248,242,229,0.9)" : "rgba(222,228,236,0.76)" }}>
                   {paragraph.includes(site.location) ? (
                     <>
@@ -297,25 +299,25 @@ export default function About() {
                 </p>
               ))}
 
-              <div className="pt-3 grid grid-cols-3 gap-2 sm:gap-4 border-t border-white/10">
+              <div className="pt-3 grid grid-cols-3 gap-1.5 sm:gap-4 border-t border-white/10 w-full min-w-0">
                 {stats.map(({ id, val, label }, i) => (
                   <motion.div key={id}
                     initial={{ opacity:0, y:12 }} animate={inView?{opacity:1,y:0}:{}}
                     transition={{ delay:.6+i*.1 }}
-                    className="text-center rounded-2xl px-2 py-3"
+                    className="text-center rounded-xl sm:rounded-2xl px-1 py-2.5 sm:px-2 sm:py-3 min-w-0"
                     style={{ background:"rgba(255,255,255,.035)", border:"1px solid rgba(255,255,255,.06)" }}>
-                    <div className="text-xl sm:text-2xl font-bold" style={{ color:["#d49a57","#c47d45","#e6bd82"][i % 3] }}>{val}</div>
-                    <div className="text-[9px] sm:text-[10px] tracking-wide mt-0.5" style={{ color:"rgba(222,228,236,0.58)" }}>{label}</div>
+                    <div className="text-lg sm:text-2xl font-bold leading-none" style={{ color:["#d49a57","#c47d45","#e6bd82"][i % 3] }}>{val}</div>
+                    <div className="text-[8px] sm:text-[10px] tracking-wide mt-1 leading-tight break-words hyphens-auto" style={{ color:"rgba(222,228,236,0.58)" }}>{label}</div>
                   </motion.div>
                 ))}
               </div>
 
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1.5 sm:gap-2 min-w-0">
                 {about.tags.map((tag, i) => (
                   <motion.span key={tag}
                     initial={{ opacity:0, scale:.85 }} animate={inView?{opacity:1,scale:1}:{}}
                     transition={{ delay:.7+i*.07 }} whileHover={{ scale:1.1, y:-2 }}
-                    className="px-3 py-1 rounded-full text-xs cursor-default transition-all duration-200"
+                    className="px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs cursor-default transition-all duration-200 max-w-full break-words"
                     style={{ border:"1px solid rgba(212,154,87,0.28)", color:"#e6bd82", background:"rgba(92,56,35,0.36)" }}>
                     {tag}
                   </motion.span>
@@ -324,9 +326,9 @@ export default function About() {
             </div>
           </motion.div>
 
-          <div className="lg:col-span-2 space-y-3 sm:space-y-4">
+          <div className="lg:col-span-2 space-y-3 sm:space-y-4 w-full min-w-0">
             <AboutOrbital />
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full min-w-0">
               {highlights.map((h, i) => {
                 const Icon = ICON_MAP[h.icon as keyof typeof ICON_MAP] ?? Server;
                 const colors = HIGHLIGHT_COLORS[i % HIGHLIGHT_COLORS.length];

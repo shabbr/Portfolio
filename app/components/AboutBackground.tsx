@@ -12,12 +12,12 @@ export default function AboutBackground() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
       <motion.div
-        className="absolute right-0 top-1/2 -translate-y-1/2 opacity-30"
+        className="absolute right-0 top-1/2 -translate-y-1/2 opacity-30 max-w-[100vw]"
         initial={{ opacity: 0, x: 100 }}
         whileInView={{ opacity: 0.3, x: 0 }}
         transition={{ duration: 1.2, ease: "easeOut" }}
         viewport={{ once: true, margin: "-100px" }}
-        style={{ width: "600px", height: "600px" }}
+        style={{ width: "min(600px, 100vw)", height: "min(600px, 100vw)" }}
       >
         <svg viewBox="0 0 400 350" className="w-full h-full" fill="none">
           <rect x="60" y="40" width="280" height="200" rx="20" fill="rgba(30,17,12,0.3)" stroke="rgba(212,154,87,0.4)" strokeWidth="2" />
@@ -50,7 +50,7 @@ export default function AboutBackground() {
       </motion.div>
 
       <motion.div
-        className="absolute right-1/3 top-1/4 w-96 h-96 rounded-full pointer-events-none"
+        className="absolute right-1/3 top-1/4 w-64 h-64 sm:w-96 sm:h-96 rounded-full pointer-events-none"
         style={{
           background: "radial-gradient(circle, rgba(212,154,87,0.15) 0%, transparent 70%)",
           filter: "blur(60px)",

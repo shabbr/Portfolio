@@ -24,13 +24,21 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+  background: var(--bg);
+  /* Paint overscroll (rubber-band) areas with the theme bg so no white line
+     ever flashes at the very top/bottom on mobile. */
+  overscroll-behavior: none;
+}
 
 body {
   background: var(--bg);
   color: var(--white);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   overflow-x: hidden;
+  overscroll-behavior: none;
 }
 
 /* ── Glass ─────────────────────────────── */
@@ -303,3 +311,46 @@ body {
 /* ── 3-D perspective wrapper ────────────── */
 .perspective-1000 { perspective: 1000px; }
 .preserve-3d      { transform-style: preserve-3d; }
+
+/* ──────────────────────────────────────────────────────────
+   Mobile performance
+   backdrop-filter: blur() is one of the most expensive things a
+   phone GPU can do while scrolling — it re-samples the whole area
+   behind the element every frame and is the main cause of scroll
+   jank here. On small screens we drop the blur and compensate with
+   a slightly more opaque background so panels still read as "glass".
+   ────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .glass {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(30, 19, 12, 0.92);
+  }
+  .glass-strong {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(22, 16, 12, 0.92);
+  }
+  .neon-card {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(26, 16, 11, 0.94);
+  }
+  /* Nav sets its background/blur via inline styles, so override with
+     !important to beat inline specificity. */
+  .nav-surface {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(16, 10, 7, 0.96) !important;
+  }
+}
+
+/* ── Respect users who prefer reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

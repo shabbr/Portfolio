@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import DeferredFloatingCode from "./components/DeferredFloatingCode";
@@ -16,6 +16,14 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
   display: "swap",
 });
+
+// theme-color makes the mobile browser paint its UI strip (address bar,
+// overscroll area) with the site background instead of white — this is what
+// flashes as a "white line" at the top during fast scrolling.
+export const viewport: Viewport = {
+  themeColor: "#070504",
+  colorScheme: "dark",
+};
 
 function siteUrl(): string {
   return (
